@@ -1,5 +1,5 @@
 Instalar pip
-```    
+```
 sudo apt-get install python-pip
 ```
 
@@ -22,7 +22,7 @@ source $VENV_WRAPPER
 fi
 ```
 
- 
+
 Crear entorno virtual
 ```
 mkvirtualenv TPOO
@@ -36,4 +36,15 @@ workon TPOO
 Desactivar entorno virtual
 ```
 deactivate
+```
+
+Instalar Graphviz (necesario para convertir archivos DOT a PNG)
+```
+sudo apt-get install graphviz
+```
+
+Generar un diagrama de los models y convertirlo a PNG
+```
+python manage.py graph_models usability_tests tasks > models.dot
+dot -Tpng models.dot -o models.png
 ```
