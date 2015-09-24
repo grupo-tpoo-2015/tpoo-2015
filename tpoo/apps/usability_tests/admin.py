@@ -7,5 +7,3 @@ admin.site.register(Task)
 admin.site.register(Refactoring)
 admin.site.register(Scenario)
 admin.site.register(AppVersion)
-
-

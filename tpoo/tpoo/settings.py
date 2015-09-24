@@ -44,6 +44,7 @@ INSTALLED_APPS = (
     'django_extensions',
 
     'usability_tests',
+    'usability_tests_executions',
     'tasks',
 )
 
