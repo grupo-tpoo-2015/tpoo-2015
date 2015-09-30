@@ -19,7 +19,7 @@ class Refactoring(models.Model):
 
 
 class Task(models.Model):
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=256)
     usability_test = models.ForeignKey(UsabilityTest, related_name='tasks')
 
 
