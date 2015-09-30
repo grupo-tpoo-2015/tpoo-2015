@@ -66,3 +66,14 @@ sudo apt-get install libmysqlclient-dev
 sudo apt-get install python-dev
 pip install MySQL-python  # que igual ya está en el requirements.txt
 ```
+
+Luego de hacer algun cambio en los esquemas:
+```
+python manage.py makemigrations
+python manage.py migrate
+```
+
+Para ver si hay migraciones pendientes:
+```
+python manage.py migrate  --list
+```
