@@ -49,9 +49,14 @@ python manage.py graph_models usability_tests tasks > models.dot
 dot -Tpng models.dot -o models.png
 ```
 
-Después de instalar algo con pip hacer esto:
+Después de instalar algo con pip, hacer esto:
 ```
 pip freeze > requirements.txt
+```
+
+Para instalar las dependencias con pip:
+```
+pip install -r requirements.txt
 ```
 
 Instalar conectores MySql
