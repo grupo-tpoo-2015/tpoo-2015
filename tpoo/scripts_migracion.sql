@@ -36,25 +36,30 @@ from tpoodump.scenario S inner join usability_tests_appversion AV on (S.usabilit
 where (S.name like '%Non Refactored' and AV.name ='Non Refactored') or 
 	  (S.name not like '%Non Refactored' and AV.name ='Refactored');
 
+/*migra refactorings*/
+insert into usability_tests_refactoring(id, name)
+select id, name
+from tpoodump.refactorings
+
 /*relacion entre scenario_task y refactoring -many to many, TODO en el modelo 
 la relacion entre refactoring y appVersion vuela. Se reemplaza por metodo que hace las queries necesarias
 */
 select task_version_id, refactoring_id
 from(
 select task_version_id, refactoring_id
-from step
+from tpoodump.step
 where refactoring_id is not null
 
 UNION ALL
 
 select task_version_id, second_refactoring_id
-from step
+from tpoodump.step
 where second_refactoring_id is not null
 
 UNION ALL
 
 select task_version_id, third_refactoring_id
-from step
+from tpoodump.step
 where third_refactoring_id is not null) T
 group by task_version_id, refactoring_id
 

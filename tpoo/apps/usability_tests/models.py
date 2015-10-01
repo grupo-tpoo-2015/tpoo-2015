@@ -14,8 +14,7 @@ class AppVersion(models.Model):
 
 
 class Refactoring(models.Model):
-    name = models.CharField(max_length=64)
-    app_version = models.ForeignKey(AppVersion, related_name='refactorings')
+    name = models.CharField(max_length=64)   
 
 
 class Task(models.Model):
