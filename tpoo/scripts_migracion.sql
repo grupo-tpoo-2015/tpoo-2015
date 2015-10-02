@@ -39,7 +39,12 @@ where (S.name like '%Non Refactored' and AV.name ='Non Refactored') or
 /*migra refactorings*/
 insert into usability_tests_refactoring(id, name)
 select id, name
-from tpoodump.refactorings
+from tpoodump.refactorings;
+
+/*migra scenario_task, lo que antes era task_for_version*/
+insert into tasks_scenariotask(id,scenario_id, task_id)
+select id, scenario_id, task_id
+from tpoodump.task_version;
 
 /*relacion entre scenario_task y refactoring -many to many, TODO en el modelo 
 la relacion entre refactoring y appVersion vuela. Se reemplaza por metodo que hace las queries necesarias
