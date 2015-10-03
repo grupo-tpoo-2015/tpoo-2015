@@ -1,6 +1,6 @@
 from django.db import models
 from usability_tests.models import Scenario
-from tasks.models import ScenarioTask, InteractionStep
+from tasks.models import ScenarioTask, InteractionStep, ObservationType
 
 
 # Create your models here.
@@ -21,3 +21,9 @@ class TaskScenarioExecution(models.Model):
 class InteractionStepExecution(models.Model):
     task_scenario_execution = models.ForeignKey(TaskScenarioExecution)
     interaction_step = models.ForeignKey(InteractionStep)
+
+
+class Observation(models.Model):
+    value = models.FloatField()
+    step_execution = models.ForeignKey(InteractionStepExecution, related_name='observations')
+    observation_type = models.ForeignKey(ObservationType, related_name='observations')

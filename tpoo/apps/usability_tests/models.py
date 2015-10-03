@@ -25,3 +25,4 @@ class Task(models.Model):
 class Scenario(models.Model):
     name = models.CharField(max_length=64)
     app_version = models.ForeignKey(AppVersion, related_name='scenarios')
+

@@ -49,24 +49,38 @@ from tpoodump.task_version;
 /*relacion entre scenario_task y refactoring -many to many, TODO en el modelo 
 la relacion entre refactoring y appVersion vuela. Se reemplaza por metodo que hace las queries necesarias
 */
+insert into tasks_scenariotask_refactorings(scenariotask_id, refactoring_id)
 select task_version_id, refactoring_id
 from(
 select task_version_id, refactoring_id
 from tpoodump.step
-where refactoring_id is not null
+where (refactoring_id is not null) and (refactoring_id <> 0)
 
 UNION ALL
 
 select task_version_id, second_refactoring_id
 from tpoodump.step
-where second_refactoring_id is not null
+where (second_refactoring_id is not null) and (second_refactoring_id <> 0)
 
 UNION ALL
 
 select task_version_id, third_refactoring_id
 from tpoodump.step
-where third_refactoring_id is not null) T
-group by task_version_id, refactoring_id
+where (third_refactoring_id is not null) and (third_refactoring_id <> 0)) T
+group by task_version_id, refactoring_id;
 
+/*migra step*/
+insert into tasks_interactionstep(id, scenario_task_id, is_question, name, `order`)
+select id, task_version_id, question, name, step_order
+from tpoodump.step;
 
+/*migra scenario execution*/
+insert into usability_tests_executions_scenarioexecution(id, participant_id, scenario_id)
+select id, user_id, scenario_id
+from tpoodump.scenario_execution;
+
+/*migra task execution*/
+insert into usability_tests_executions_taskscenarioexecution(id, scenario_execution_id, scenario_task_id)
+select id, scenario_execution_id, task_version_id
+from tpoodump.task_execution;
 
