@@ -67,6 +67,12 @@ sudo apt-get install python-dev
 pip install MySQL-python  # que igual ya está en el requirements.txt
 ```
 
+Para crear las bases de datos necesarias, ejecutar en la consola de MySQL:
+```
+CREATE DATABASE tpoo;
+CREATE DATABASE tpoodump;
+```
+
 Luego de hacer algun cambio en los esquemas:
 ```
 python manage.py makemigrations
