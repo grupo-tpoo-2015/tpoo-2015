@@ -1,3 +1,7 @@
 from django.contrib import admin
+from tasks.models import ObservationType, ScenarioTask, InteractionStep
 
-# Register your models here.
+
+admin.site.register(ObservationType)
+admin.site.register(ScenarioTask)
+admin.site.register(InteractionStep)
