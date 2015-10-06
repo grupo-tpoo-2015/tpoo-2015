@@ -17,7 +17,8 @@ import sys
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 PROJECT_DIR = os.path.join(BASE_DIR, 'tpoo')
-sys.path.insert(1, os.path.join(BASE_DIR, 'apps'))
+APPS_DIR = os.path.join(BASE_DIR, 'apps')
+sys.path.insert(1, APPS_DIR)
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.8/howto/deployment/checklist/
@@ -42,10 +43,12 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
 
     'django_extensions',
+    'django_jinja',
 
     'usability_tests',
     'usability_tests_executions',
     'tasks',
+    'charts',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -59,12 +62,26 @@ MIDDLEWARE_CLASSES = (
     'django.middleware.security.SecurityMiddleware',
 )
 
+DEFAULT_JINJA2_TEMPLATE_EXTENSION = '.jinja'
+
+STATICFILES_DIRS = (
+    os.path.join(PROJECT_DIR, "static"),
+)
+
 ROOT_URLCONF = 'tpoo.urls'
 
 TEMPLATES = [
     {
+        'BACKEND': 'django.template.backends.jinja2.Jinja2',
+        'DIRS': [os.path.join(PROJECT_DIR, "jinja2")],
+        'APP_DIRS': True,
+        'OPTIONS': {
+            'environment': 'tpoo.jinja2_context_globals.environment',
+        },
+    },
+    {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [os.path.join(PROJECT_DIR, "templates")],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
