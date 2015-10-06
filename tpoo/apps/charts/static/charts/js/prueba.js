@@ -2,9 +2,7 @@
     d3,
 */
 
-
-
-var tuto = function () {
+var prueba = (function () {
 
     'use strict';
 
@@ -17,7 +15,7 @@ var tuto = function () {
                 data = obj;
             for (i = 1; i < args.length; i += 1) {
                 attr = args[i];
-                if (attr.slice(-2) === '()') {
+                if (typeof attr === "string" && attr.slice(-2) === '()') {
                     data = data[attr.slice(0, -2)]();
                 } else {
                     data = data[attr];
@@ -34,15 +32,15 @@ var tuto = function () {
 
     function generateDataSet(min_amount, max_amount) {
         var i, amount, obj = {
-            participantName: 'Juan Carlos Batman',
-            timesPerTask: [],
+            title: 'Tareas realizadas por el participante Juan Carlos Batman',
+            elements: [],
         };
 
         amount = randomFloat(min_amount, max_amount);
 
         for (i = 1; i <= amount; i += 1) {
-            obj.timesPerTask.push({
-                taskName: "Tarea #" + i,
+            obj.elements.push({
+                name: "Tarea #" + i,
                 time: randomFloat(10, 100),
             });
         }
@@ -50,99 +48,124 @@ var tuto = function () {
         return obj;
     }
 
+    function colorScale(domain, range) {
+        // TODO: find out if d3 has a mechanism for defining custom scales
+        var rScale = d3.scale.linear()
+                       .domain(domain)
+                       .range([range[0][0], range[1][0]]),
+            gScale = d3.scale.linear()
+                       .domain(domain)
+                       .range([range[0][1], range[1][2]]),
+            bScale = d3.scale.linear()
+                       .domain(domain)
+                       .range([range[0][2], range[1][2]]);
+        return function (domainValue) {
+            return 'rgb(' + [
+                Math.round(rScale(domainValue)),
+                Math.round(gScale(domainValue)),
+                Math.round(bScale(domainValue)),
+            ].join(', ') + ')';
+        };
+    }
 
-    function drawSvgBarChart(user) {
+
+    function drawBarChart(options) {
 
         var svg,
-            width = 600,
-            height = 400,
+            width,
+            height,
             max_time,
-            padding = 2,
+            paddingTop = 10,
+            gapBetweenBars = 2,
             g,
             barWidth,
             heightScale,
-            colorScale,
+            colorGradientScale,
+            xScale,
             yScale;
 
-        barWidth = (width + 2 * padding) / user.timesPerTask.length;
+        svg = d3.select('#bar-chart')
+            .style('border', 'solid black')
+            .style('margin', '10px');
 
-        max_time = d3.max(user.timesPerTask, function (obj) {
+        width = svg.node().getBoundingClientRect().width;
+        height = svg.node().getBoundingClientRect().height;
+        width = 600;
+
+
+        barWidth = ((width + gapBetweenBars) / options.elements.length) - gapBetweenBars;
+
+
+        max_time = d3.max(options.elements, function (obj) {
             return obj.time;
-        }) + 10;
+        }) + paddingTop;
 
-        colorScale = d3.scale.linear()
-                   .domain([0, max_time])
-                   .range([10, 255]);
+        // TODO: if would be so much better if instead of using 3 elemen lists, colors could be
+        // defined using different color notations like rgb, hex, color names, etc
+        colorGradientScale = colorScale([0, max_time], [[10, 75, 60], [255, 75, 60]]);
+
+        xScale = d3.scale.linear()
+                   .domain([0, options.elements.length])
+                   .range([0, width + gapBetweenBars]);
 
         yScale = d3.scale.linear()
                    .domain([0, max_time])
                    .range([height, 0]);
 
-
         heightScale = d3.scale.linear()
                         .domain([0, max_time])
                         .range([0, height]);
 
-        svg = d3.select('body').append('svg')
-            .attr('width', width)
-            .attr('height', height)
-            .style('border', 'solid black')
-            .style('margin', '10px');
 
         g = svg.selectAll('g')
-            .data(user.timesPerTask)
+            .data(options.elements)
             .enter()
             .append('g');
 
         svg.append('text')
             .attr('x', 5).attr('y', 20)
             .attr('text-anchor', 'start')
-            .text('Tareas realizadas por el participante ' + user.participantName);
+            .text(options.title);
 
+        /*jslint unparam: true */
         g.append('rect')
             .attr('x', function (obj, i) {
-                return i * barWidth;
+                return xScale(i);
             })
             .attr('y', getAndScale(yScale, 'time'))
             .attr('height', getAndScale(heightScale, 'time'))
-            .attr('width', barWidth - padding)
+            .attr('width', barWidth)
             .attr('fill', function (obj, i) {
-                return 'rgb(' + Math.round(colorScale(obj.time)) + ', 75, 60)';
+                return colorGradientScale(obj.time);
             })
             .append('title').text(function (obj) {
-                return obj.taskName;
+                return obj.name;
             });
 
         g.append('text')
             .attr('x', function (obj, i) {
-                return i * barWidth + barWidth / 2;
+                return xScale(i) + barWidth / 2;
             })
             .attr('y', function (obj) {
                 return yScale(obj.time) + 20;
             })
-            .attr('height', getAndScale(heightScale, 'time'))
-            .attr('width', barWidth - padding)
+            .attr('width', barWidth)
             .text(function (obj) {
                 return obj.time.toFixed(2);
             });
 
         g.append('text')
             .attr('x', function (obj, i) {
-                return i * barWidth + barWidth / 2;
+                return xScale(i) + barWidth / 2;
             })
             .attr('y', function (obj) {
                 return yScale(obj.time) + 35;
             })
-            .attr('height', getAndScale(heightScale, 'time'))
-            .attr('width', barWidth - padding)
-            .text(function (obj) {
-                return 'seg';
-            });
+            .attr('width', barWidth)
+            .text('seg');
+        /*jslint unparam: false */
     }
 
-    drawSvgBarChart(generateDataSet(10, 15));
+    drawBarChart(generateDataSet(10, 15));
 
-};
-
-tuto();
-
+}());

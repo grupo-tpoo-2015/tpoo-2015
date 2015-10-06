@@ -15,10 +15,15 @@
         svg rect:hover {
             opacity: 0.9;
         }
+        svg {
+            width: 600px;
+            height: 400px;
+        }
         </style>
     </head>
     <body>
-
+    <svg id="bar-chart"></svg>
+    <svg id="stacked-bar-chart"></svg>
     <script type="text/javascript" src="{{ static('d3/d3.v3.js') }}"></script>
     <script type="text/javascript" src="{{ static('charts/js/prueba.js') }}"></script>
     </body>
