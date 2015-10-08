@@ -41,8 +41,9 @@ class UserTimesPerParticipantBarChart(BarChart):
     def element_as_dict(self, scenario_task_execution):
         total = 0
         for step in scenario_task_execution.steps.all():
-            for observation in step.observations.filter(observation_type=self.time_type):
-                total += observation.value
+            if not step.interaction_step.is_question:
+                for observation in step.observations.filter(observation_type=self.time_type):
+                    total += observation.value
 
         return {
             'time': total,
