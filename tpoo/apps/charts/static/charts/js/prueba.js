@@ -88,11 +88,11 @@ var prueba = (function () {
 
         yScale = d3.scale.linear()
                    .domain([0, max_time])
-                   .range([height, 0]);
+                   .range([height - 25, 25]);
 
         heightScale = d3.scale.linear()
                         .domain([0, max_time])
-                        .range([0, height]);
+                        .range([25, height - 25]);
 
 
         g = svg.selectAll('g')

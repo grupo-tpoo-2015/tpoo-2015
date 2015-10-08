@@ -13,15 +13,19 @@ class Participant(models.Model):
 
 
 class ScenarioExecution(models.Model):
-    scenario = models.ForeignKey(Scenario)
-    participant = models.ForeignKey(Participant)
+    scenario = models.ForeignKey(Scenario, related_name='executions')
+    participant = models.ForeignKey(Participant, related_name='scenario_executions')
 
     def __unicode__(self):
-        return "Ejecución del scenario %d por parte del participante %d"
+        return "Ejecución del scenario %d por parte del participante %d" % (
+            self.scenario_id,
+            self.participant_id,
+        )
 
 
 class TaskScenarioExecution(models.Model):
-    scenario_execution = models.ForeignKey(ScenarioExecution)
+    scenario_execution = models.ForeignKey(ScenarioExecution,
+                                           related_name='scenario_task_executions')
     scenario_task = models.ForeignKey(ScenarioTask)
 
     def __unicode__(self):
@@ -32,7 +36,7 @@ class TaskScenarioExecution(models.Model):
 
 
 class InteractionStepExecution(models.Model):
-    task_scenario_execution = models.ForeignKey(TaskScenarioExecution)
+    task_scenario_execution = models.ForeignKey(TaskScenarioExecution, related_name='steps')
     interaction_step = models.ForeignKey(InteractionStep)
 
     def __unicode__(self):

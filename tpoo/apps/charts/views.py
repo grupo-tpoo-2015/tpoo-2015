@@ -1,18 +1,12 @@
-import random
 from django.shortcuts import render
+from usability_tests_executions.models import Participant
+from .models import UserTimesPerParticipantBarChart
 
 
 def test(request):
 
-    amount = random.randint(10, 15)
-    dataset = {
-        'title': 'Tareas realizadas por el participante Juan Carlos Batman',
-        'elements': [{
-            'name': "Tarea #%d" % i,
-            'time': random.uniform(10, 100),
-        } for i in xrange(amount)]
-    }
+    participant = Participant.objects.order_by('?').first()  # random participant
 
     return render(request, 'charts/prueba.jinja', {
-        'dataset': dataset,
+        'dataset': UserTimesPerParticipantBarChart(participant).as_dict(),
     })
