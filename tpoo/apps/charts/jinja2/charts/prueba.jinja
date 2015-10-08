@@ -26,6 +26,11 @@
     <svg id="stacked-bar-chart"></svg>
     <script type="text/javascript" src="{{ static('d3/d3.v3.js') }}"></script>
     <script type="text/javascript" src="{{ static('charts/js/prueba.js') }}"></script>
+    <script>
+        prueba.init({
+            dataset: {{ jsonify(dataset) }},
+        });
+    </script>
     </body>
 
 </html>

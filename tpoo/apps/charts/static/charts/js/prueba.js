@@ -26,28 +26,6 @@ var prueba = (function () {
         };
     }
 
-    function randomFloat(min, max) {
-        return Math.random() * (max - min) + min;
-    }
-
-    function generateDataSet(min_amount, max_amount) {
-        var i, amount, obj = {
-            title: 'Tareas realizadas por el participante Juan Carlos Batman',
-            elements: [],
-        };
-
-        amount = randomFloat(min_amount, max_amount);
-
-        for (i = 1; i <= amount; i += 1) {
-            obj.elements.push({
-                name: "Tarea #" + i,
-                time: randomFloat(10, 100),
-            });
-        }
-
-        return obj;
-    }
-
     function colorScale(domain, range) {
         // TODO: find out if d3 has a mechanism for defining custom scales
         var rScale = d3.scale.linear()
@@ -166,6 +144,10 @@ var prueba = (function () {
         /*jslint unparam: false */
     }
 
-    drawBarChart(generateDataSet(10, 15));
+    return {
+        init: function (params) {
+            drawBarChart(params.dataset);
+        }
+    };
 
 }());
