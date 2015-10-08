@@ -73,10 +73,10 @@ ROOT_URLCONF = 'tpoo.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.jinja2.Jinja2',
-        'DIRS': [os.path.join(PROJECT_DIR, "jinja2")],
+        'DIRS': [os.path.join(PROJECT_DIR, "jinja2", "templates")],
         'APP_DIRS': True,
         'OPTIONS': {
-            'environment': 'tpoo.jinja2_context_globals.environment',
+            'environment': 'tpoo.jinja2.environment',
         },
     },
     {
