@@ -14,7 +14,7 @@ $legacy_db < legacy.sql
 echo -e "\e[32mOK\e[39m"
 
 
-# Get a list of all tables used in our migartion script
+# Get a list of all tables used in our migration script
 echo -n "Cleaning most tables from the default database... "
 tpoo_tables=$( \
     cat scripts_migracion.sql | grep "insert into" \
