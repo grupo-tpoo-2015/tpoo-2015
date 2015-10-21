@@ -22,6 +22,7 @@ urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
     url(r'^$', 'charts.views.home'),
     url(r'^bar_chart/(?P<participant_id>\d+)$', 'charts.views.bar_chart', name='bar_chart'),
+    url(r'^stacked_bar_chart$', 'charts.views.stacked_bar_chart', name='stacked_bar_chart'),
 ]
 
 if settings.DEBUG:

@@ -20,6 +20,6 @@ def bar_chart(request, participant_id):
 
 def stacked_bar_chart(request):
 
-    return render(request, 'charts/bar_chart.jinja', {
-        'dataset': StackedBarChart(participant).as_dict(),
+    return render(request, 'charts/stacked_bar_chart.jinja', {
+        'dataset': StackedBarChart().as_dict(),
     })

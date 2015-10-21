@@ -1,3 +1,6 @@
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
 from usability_tests_executions.models import TaskScenarioExecution
 from tasks.models import ObservationType
 
@@ -30,15 +33,81 @@ class BarChart(Chart):
 
 
 class StackedBarChart(Chart):
+    """
+    serviría para contrastar, para cada tarea,
+    la performance promedio de los usuarios en distintas versiones de la aplicación
+    """
+
+    def get_title(self):
+        return "Gráfico de barras apiladas"
 
     def get_bars_as_dict(self):
-        return [[self.bar_as_dict(e)] for e in self.get_bars()]
+        return [self.bar_as_dict(e) for e in self.get_bars()]
 
     def get_bars(self):
-        raise NotImplementedError()
+        return [
+            [
+                {
+                    'name': "Foo",
+                    'value': 23,
+                },
+                {
+                    'name': "Bar",
+                    'value': 12,
+                },
+                {
+                    'name': "Baz",
+                    'value': 45,
+                },
+            ],
+            [
+                {
+                    'name': "Foo",
+                    'value': 23,
+                },
+                {
+                    'name': "Bar",
+                    'value': 12,
+                },
+                {
+                    'name': "Baz",
+                    'value': 45,
+                },
+            ],
+            [
+                {
+                    'name': "Foo",
+                    'value': 87,
+                },
+                {
+                    'name': "Bar",
+                    'value': 67,
+                },
+                {
+                    'name': "Baz",
+                    'value': 145,
+                },
+            ],
+            [
+                {
+                    'name': "Foo",
+                    'value': 223,
+                },
+                {
+                    'name': "Bar",
+                    'value': 12,
+                },
+            ],
+            [
+                {
+                    'name': "Foo",
+                    'value': 23,
+                },
+            ]
+        ]
 
-    def bar_as_dict(self):
-        raise NotImplementedError()
+    def bar_as_dict(self, bar):
+        return bar
 
 
 class UserTimesPerParticipantBarChart(BarChart):
