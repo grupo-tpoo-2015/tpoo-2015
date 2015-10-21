@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Test</title>
+    </head>
+    <body>
+        <a href="{{ url('stacked_bar_chart') }}">Probando: gráfico de barras apiladas</a>
+        <h3>Gráficos de barras por participante</h3>
+        <p>
+            Para cada participante se muestran los tiempos que le llevó cada tarea.
+        </p>
+        <ul>
+        {% for participant in participants %}
+            <li>
+                <a href="{{ url('bar_chart', args=[participant.id]) }}">{{ participant.name }}</a>
+            </li>
+        {% endfor %}
+        </ul>
+
+    </body>
+
+</html>

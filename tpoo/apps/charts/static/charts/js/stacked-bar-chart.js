@@ -2,7 +2,7 @@
     d3,
 */
 
-var prueba = (function () {
+var stackedBarChart = (function () {
 
     'use strict';
 
@@ -52,7 +52,7 @@ var prueba = (function () {
         var svg,
             width,
             height,
-            max_time,
+            max_value,
             paddingTop = 10,
             gapBetweenBars = 2,
             g,
@@ -62,7 +62,7 @@ var prueba = (function () {
             xScale,
             yScale;
 
-        svg = d3.select('#bar-chart')
+        svg = d3.select('svg')
             .style('border', 'solid black')
             .style('margin', '10px');
 
@@ -71,32 +71,32 @@ var prueba = (function () {
         width = 600;
 
 
-        barWidth = ((width + gapBetweenBars) / options.elements.length) - gapBetweenBars;
+        barWidth = ((width + gapBetweenBars) / options.bars.length) - gapBetweenBars;
 
 
-        max_time = d3.max(options.elements, function (obj) {
-            return obj.time;
+        max_value = d3.max(options.bars, function (obj) {
+            return obj.value;
         }) + paddingTop;
 
         // TODO: if would be so much better if instead of using 3 elemen lists, colors could be
         // defined using different color notations like rgb, hex, color names, etc
-        colorGradientScale = colorScale([0, max_time], [[10, 75, 60], [255, 75, 60]]);
+        colorGradientScale = colorScale([0, max_value], [[10, 75, 60], [255, 75, 60]]);
 
         xScale = d3.scale.linear()
-                   .domain([0, options.elements.length])
+                   .domain([0, options.bars.length])
                    .range([0, width + gapBetweenBars]);
 
         yScale = d3.scale.linear()
-                   .domain([0, max_time])
+                   .domain([0, max_value])
                    .range([height - 25, 25]);
 
         heightScale = d3.scale.linear()
-                        .domain([0, max_time])
+                        .domain([0, max_value])
                         .range([25, height - 25]);
 
 
         g = svg.selectAll('g')
-            .data(options.elements)
+            .data(options.bars)
             .enter()
             .append('g');
 
@@ -110,11 +110,11 @@ var prueba = (function () {
             .attr('x', function (obj, i) {
                 return xScale(i);
             })
-            .attr('y', getAndScale(yScale, 'time'))
-            .attr('height', getAndScale(heightScale, 'time'))
+            .attr('y', getAndScale(yScale, 'value'))
+            .attr('height', getAndScale(heightScale, 'value'))
             .attr('width', barWidth)
             .attr('fill', function (obj, i) {
-                return colorGradientScale(obj.time);
+                return colorGradientScale(obj.value);
             })
             .append('title').text(function (obj) {
                 return obj.name;
@@ -125,11 +125,11 @@ var prueba = (function () {
                 return xScale(i) + barWidth / 2;
             })
             .attr('y', function (obj) {
-                return yScale(obj.time) + 20;
+                return yScale(obj.value) + 20;
             })
             .attr('width', barWidth)
             .text(function (obj) {
-                return obj.time.toFixed(2);
+                return obj.value.toFixed(2);
             });
 
         g.append('text')
@@ -137,7 +137,7 @@ var prueba = (function () {
                 return xScale(i) + barWidth / 2;
             })
             .attr('y', function (obj) {
-                return yScale(obj.time) + 35;
+                return yScale(obj.value) + 35;
             })
             .attr('width', barWidth)
             .text('seg');
