@@ -5,7 +5,10 @@
         <title>D3 Test</title>
     </head>
     <body>
-        <h3>Gráficos de barras de los tiempos totales para cada tarea de cada participante</h3>
+        <h3>Gráficos de barras por participante</h3>
+        <p>
+            Para cada participante se muestran los tiempos que le llevó cada tarea.
+        </p>
         <ul>
         {% for participant in participants %}
             <li>
@@ -13,6 +16,8 @@
             </li>
         {% endfor %}
         </ul>
+
+        <h3>Gráficos de barras apiladas por tarea</h3>
     </body>
 
 </html>
