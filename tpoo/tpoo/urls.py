@@ -20,7 +20,8 @@ from django.contrib import admin
 
 urlpatterns = [
     url(r'^admin/', include(admin.site.urls)),
-    url(r'^prueba/', 'charts.views.test'),
+    url(r'^$', 'charts.views.home'),
+    url(r'^bar_chart/(?P<participant_id>\d+)$', 'charts.views.bar_chart', name='bar_chart'),
 ]
 
 if settings.DEBUG:

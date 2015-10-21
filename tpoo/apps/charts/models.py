@@ -4,6 +4,9 @@ from tasks.models import ObservationType
 
 class Chart(object):
 
+    def get_title(self):
+        raise NotImplementedError()
+
     def as_dict(self):
         return {
             'title': self.get_title(),
@@ -14,10 +17,19 @@ class Chart(object):
         raise NotImplementedError()
 
 
-class BarChart(Chart):
+class StackedBarChart(Chart):
 
-    def get_title(self):
+    def get_elements_as_dict(self):
+        return [[self.element_as_dict(e)] for e in self.get_elements()]
+
+    def get_elements(self):
         raise NotImplementedError()
+
+    def element_as_dict(self):
+        raise NotImplementedError()
+
+
+class BarChart(Chart):
 
     def get_elements_as_dict(self):
         return [self.element_as_dict(e) for e in self.get_elements()]

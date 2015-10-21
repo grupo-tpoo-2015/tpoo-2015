@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Test</title>
+    </head>
+    <body>
+        <h3>Gráficos de barras de los tiempos totales para cada tarea de cada participante</h3>
+        <ul>
+        {% for participant in participants %}
+            <li>
+                <a href="{{ url('bar_chart', args=[participant.id]) }}">{{ participant.name }}</a>
+            </li>
+        {% endfor %}
+        </ul>
+    </body>
+
+</html>

@@ -2,7 +2,7 @@
     d3,
 */
 
-var prueba = (function () {
+var barChart = (function () {
 
     'use strict';
 
@@ -62,7 +62,7 @@ var prueba = (function () {
             xScale,
             yScale;
 
-        svg = d3.select('#bar-chart')
+        svg = d3.select('svg')
             .style('border', 'solid black')
             .style('margin', '10px');
 
