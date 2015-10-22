@@ -10,25 +10,28 @@ class Chart(object):
     def as_dict(self):
         return {
             'title': self.get_title(),
-            'bars': self.get_bars_as_dict(),
+            self.get_elements_name(): self.get_elements_as_dict(),
         }
 
     def get_title(self):
         raise NotImplementedError()
 
-    def get_bars_as_dict(self):
+    def get_elements_as_dict(self):
         raise NotImplementedError()
 
 
 class BarChart(Chart):
 
-    def get_bars_as_dict(self):
-        return [self.bar_as_dict(e) for e in self.get_bars()]
+    def get_elements_name(self):
+        return 'bars'
 
-    def get_bars(self):
+    def get_elements_as_dict(self):
+        return [self.element_as_dict(e) for e in self.get_elements()]
+
+    def get_elements(self):
         raise NotImplementedError()
 
-    def bar_as_dict(self):
+    def element_as_dict(self):
         raise NotImplementedError()
 
 
@@ -38,13 +41,18 @@ class StackedBarChart(Chart):
     la performance promedio de los usuarios en distintas versiones de la aplicación
     """
 
+    def get_elements_name(self):
+        return 'stacks'
+
     def get_title(self):
         return "Gráfico de barras apiladas"
 
-    def get_bars_as_dict(self):
-        return [self.bar_as_dict(e) for e in self.get_bars()]
+    def get_elements_as_dict(self):
+        for e in self.get_elements():
+            print sum(x['value'] for x in e)
+        return [self.element_as_dict(e) for e in self.get_elements()]
 
-    def get_bars(self):
+    def get_elements(self):
         return [
             [
                 {
@@ -106,8 +114,8 @@ class StackedBarChart(Chart):
             ]
         ]
 
-    def bar_as_dict(self, bar):
-        return bar
+    def element_as_dict(self, stack):
+        return stack
 
 
 class UserTimesPerParticipantBarChart(BarChart):
@@ -119,7 +127,7 @@ class UserTimesPerParticipantBarChart(BarChart):
     def get_title(self):
         return 'Tareas realizadas por el participante %s' % self.participant.name
 
-    def bar_as_dict(self, scenario_task_execution):
+    def element_as_dict(self, scenario_task_execution):
         total = 0
         for step in scenario_task_execution.steps.all():
             if not step.interaction_step.is_question:
@@ -131,6 +139,6 @@ class UserTimesPerParticipantBarChart(BarChart):
             'name': scenario_task_execution.scenario_task.task.name,
         }
 
-    def get_bars(self):
+    def get_elements(self):
         all_objs = TaskScenarioExecution.objects.all()
         return all_objs.filter(scenario_execution__participant=self.participant)

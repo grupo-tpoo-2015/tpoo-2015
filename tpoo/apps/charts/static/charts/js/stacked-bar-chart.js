@@ -47,14 +47,15 @@ var stackedBarChart = (function () {
     }
 
 
-    function drawBarChart(options) {
+    function drawBarChart(data) {
 
         var svg,
             width,
             height,
             max_value,
             paddingTop = 10,
-            gapBetweenBars = 2,
+            paddingBottom = 30,
+            gapBetweenStacks = 2,
             g,
             barWidth,
             heightScale,
@@ -71,76 +72,86 @@ var stackedBarChart = (function () {
         width = 600;
 
 
-        barWidth = ((width + gapBetweenBars) / options.bars.length) - gapBetweenBars;
+        barWidth = ((width + gapBetweenStacks) / data.stacks.length) - gapBetweenStacks;
 
 
-        max_value = d3.max(options.bars, function (obj) {
-            return obj.value;
+        max_value = d3.max(data.stacks, function (stack) {
+            return d3.sum(stack, function (bar) {
+                return bar.value;
+            });
         }) + paddingTop;
 
         // TODO: if would be so much better if instead of using 3 elemen lists, colors could be
         // defined using different color notations like rgb, hex, color names, etc
-        colorGradientScale = colorScale([0, max_value], [[10, 75, 60], [255, 75, 60]]);
+        colorGradientScale = colorScale([0, d3.max(data.stacks, function (stack) {return stack.length})], [[10, 75, 60], [255, 75, 60]]);
 
         xScale = d3.scale.linear()
-                   .domain([0, options.bars.length])
-                   .range([0, width + gapBetweenBars]);
+                   .domain([0, data.stacks.length])
+                   .range([0, width + gapBetweenStacks]);
 
         yScale = d3.scale.linear()
                    .domain([0, max_value])
-                   .range([height - 25, 25]);
+                   .range([height - paddingBottom, paddingBottom]);
 
         heightScale = d3.scale.linear()
                         .domain([0, max_value])
-                        .range([25, height - 25]);
+                        .range([paddingBottom, height - paddingBottom]);
 
+        console.log(max_value);
 
         g = svg.selectAll('g')
-            .data(options.bars)
+            .data(data.stacks)
             .enter()
             .append('g');
 
         svg.append('text')
             .attr('x', 5).attr('y', 20)
             .attr('text-anchor', 'start')
-            .text(options.title);
+            .text(data.title);
 
         /*jslint unparam: true */
-        g.append('rect')
-            .attr('x', function (obj, i) {
-                return xScale(i);
+        g.selectAll('rect').data(function (d) {return d; }).enter()
+            .append('rect')
+            .attr('x', function (bar, i, j) {
+                return xScale(j);
             })
-            .attr('y', getAndScale(yScale, 'value'))
-            .attr('height', getAndScale(heightScale, 'value'))
+            .attr('y', function (bar, i, j) {
+                var k, accum = 0;
+                for (k = 0; k <= i; k += 1) {
+                    accum += data.stacks[j][k].value;
+                }
+                return 300 - accum;
+            })
+            .attr('height', function (bar) {return bar.value; })
             .attr('width', barWidth)
             .attr('fill', function (obj, i) {
-                return colorGradientScale(obj.value);
+                return colorGradientScale(i);
             })
             .append('title').text(function (obj) {
                 return obj.name;
             });
 
-        g.append('text')
-            .attr('x', function (obj, i) {
-                return xScale(i) + barWidth / 2;
-            })
-            .attr('y', function (obj) {
-                return yScale(obj.value) + 20;
-            })
-            .attr('width', barWidth)
-            .text(function (obj) {
-                return obj.value.toFixed(2);
-            });
+        // g.append('text')
+        //     .attr('x', function (obj, i, j) {
+        //         return xScale(j) + barWidth / 2;
+        //     })
+        //     .attr('y', function (obj) {
+        //         return yScale(obj.value) + 20;
+        //     })
+        //     .attr('width', barWidth)
+        //     .text(function (obj) {
+        //         return obj.value.toFixed(2);
+        //     });
 
-        g.append('text')
-            .attr('x', function (obj, i) {
-                return xScale(i) + barWidth / 2;
-            })
-            .attr('y', function (obj) {
-                return yScale(obj.value) + 35;
-            })
-            .attr('width', barWidth)
-            .text('seg');
+        // g.append('text')
+        //     .attr('x', function (obj, i, j) {
+        //         return xScale(j) + barWidth / 2;
+        //     })
+        //     .attr('y', function (obj) {
+        //         return yScale(obj.value) + 35;
+        //     })
+        //     .attr('width', barWidth)
+        //     .text('seg');
         /*jslint unparam: false */
     }
 
