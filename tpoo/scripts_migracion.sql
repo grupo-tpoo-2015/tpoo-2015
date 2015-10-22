@@ -69,10 +69,11 @@ from tpoodump.step
 where (third_refactoring_id is not null) and (third_refactoring_id <> 0)) T
 group by task_version_id, refactoring_id;
 
-/*migra step*/
+/*migra step que no son preguntas*/
 insert into tasks_interactionstep(id, scenario_task_id, is_question, name, `order`)
 select id, task_version_id, question, name, step_order
-from tpoodump.step;
+from tpoodump.step S
+where not(S.question);
 
 /*migra scenario execution*/
 insert into usability_tests_executions_scenarioexecution(id, participant_id, scenario_id)
@@ -86,54 +87,23 @@ from tpoodump.task_execution;
 
 /*migra los interaction_step_execution*/
 insert into usability_tests_executions_interactionstepexecution(id, interaction_step_id, task_scenario_execution_id)
-select id, step_id, task_execution_id
-from tpoodump.step_execution;
+select SE.id, SE.step_id, SE.task_execution_id
+from tpoodump.step_execution SE inner join tpoodump.step S on (SE.step_id = S.id)
+where not(S.question);
 
-/*plantea 3 tipos de observaciones posibles, para los datos de la base de datos que hay cargados*/
+/*plantea la observación tiempo*/
 insert into tasks_observationtype(id, name, unit)
-values (1,'done', 'boolean');
+values (1,'time', 'seconds');
 
-insert into tasks_observationtype(id, name, unit)
-values (2,'time', 'seconds');
-
-/*insert into tasks_observationtype(id, name, unit)
-values (3,'question', 'boolean');*/
-
-/*a todos los interaction steps se le pueden observar si están realizados o no. 
-si son de tipo question se puede observar si contestó o no
-a los que no son tipo question y estan terminadas se les pueden observar el tiempo*/
-
+/*guarda el observation tiempo para step que no son preguntas*/
 insert into tasks_interactionstep_observation_types(interactionstep_id, observationtype_id)
-select id, 1 /*a todos los pasos si está realizado o no*/ 
-from tpoodump.step;
-
-insert into tasks_interactionstep_observation_types(interactionstep_id, observationtype_id)
-select id, 2 /*el tiempo sólo a los que no son question*/ 
+select id, 1 /*el tiempo sólo a los que no son question*/ 
 from tpoodump.step
 where not question;
 
-insert into usability_tests_executions_observation(`value`, observation_type_id, step_execution_id)
-/*esta consulta resuelve si un paso de ejecución está resuelto o no*/
-select done, 1, T.id as step_execution_id
-from (
-select SE.id , 
-       (case when (result = '0') then false
-             when (result like '-%') then false
-            else true end) as done
-from tpoodump.step S inner join tpoodump.step_execution SE on (S.id = SE.step_id)
-where question
-
-UNION ALL
-
-select SE.id, (case when result like '%skip%' then false else true end) as done
-from tpoodump.step S inner join tpoodump.step_execution SE on (S.id = SE.step_id)
-where not question ) T;
-
 insert into usability_tests_executions_observation(`value`, observation_type_id, step_execution_id) 
-/*esta consulta agrega el observation_type time si el paso está terminado*/
-select SE.time, 2, SE.id
+/*esta consulta agrega el observation_type time */
+select SE.time, 1, SE.id
 from tpoodump.step S inner join tpoodump.step_execution SE on (S.id = SE.step_id)
-where not question and result not like '%skip%';
-
-
+where not question 
 
