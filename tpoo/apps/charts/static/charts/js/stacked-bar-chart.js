@@ -97,8 +97,6 @@ var stackedBarChart = (function () {
                         .domain([0, max_value])
                         .range([paddingBottom, height - paddingBottom]);
 
-        console.log(max_value);
-
         g = svg.selectAll('g')
             .data(data.stacks)
             .enter()

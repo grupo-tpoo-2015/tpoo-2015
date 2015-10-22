@@ -48,8 +48,6 @@ class StackedBarChart(Chart):
         return "Gráfico de barras apiladas"
 
     def get_elements_as_dict(self):
-        for e in self.get_elements():
-            print sum(x['value'] for x in e)
         return [self.element_as_dict(e) for e in self.get_elements()]
 
     def get_elements(self):
