@@ -36,10 +36,11 @@ class BarChart(Chart):
 
 
 class StackedBarChart(Chart):
-    """
-    serviría para contrastar, para cada tarea,
-    la performance promedio de los usuarios en distintas versiones de la aplicación
-    """
+
+    def as_dict(self):
+        d = super(StackedBarChart, self).as_dict()
+        d['legends'] = self.get_legends()
+        return d
 
     def get_elements_name(self):
         return 'stacks'
@@ -47,69 +48,21 @@ class StackedBarChart(Chart):
     def get_title(self):
         return "Gráfico de barras apiladas"
 
+    def get_legends(self):
+        return ["Foo", "Bar", "Soborlongo"]
+
     def get_elements_as_dict(self):
         return [self.element_as_dict(e) for e in self.get_elements()]
 
     def get_elements(self):
         return [
-            [
-                {
-                    'name': "Foo",
-                    'value': 23,
-                },
-                {
-                    'name': "Bar",
-                    'value': 12,
-                },
-                {
-                    'name': "Baz",
-                    'value': 45,
-                },
-            ],
-            [
-                {
-                    'name': "Foo",
-                    'value': 23,
-                },
-                {
-                    'name': "Bar",
-                    'value': 12,
-                },
-                {
-                    'name': "Baz",
-                    'value': 45,
-                },
-            ],
-            [
-                {
-                    'name': "Foo",
-                    'value': 87,
-                },
-                {
-                    'name': "Bar",
-                    'value': 67,
-                },
-                {
-                    'name': "Baz",
-                    'value': 145,
-                },
-            ],
-            [
-                {
-                    'name': "Foo",
-                    'value': 223,
-                },
-                {
-                    'name': "Bar",
-                    'value': 12,
-                },
-            ],
-            [
-                {
-                    'name': "Foo",
-                    'value': 23,
-                },
-            ]
+            [12, 45, 90],
+            [42, 25, 60],
+            [12, 15, 50],
+            [42, 35, 30],
+            [22, 15, 10],
+            [12, 45, 90],
+            [62, 75, 80],
         ]
 
     def element_as_dict(self, stack):

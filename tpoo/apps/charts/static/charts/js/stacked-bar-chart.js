@@ -32,9 +32,13 @@ var stackedBarChart = (function () {
             width,
             height,
             max_value,
-            paddingTop = 10,
+            paddingTop = 50,
             gapBetweenStacks = 2,
-            g,
+            stacks,
+            bars,
+            legend,
+            legendItems,
+            identityFunction = function (x) {return x; },
             barWidth,
             heightScale,
             colors,
@@ -54,7 +58,7 @@ var stackedBarChart = (function () {
 
         max_value = d3.max(data.stacks, function (stack) {
             return d3.sum(stack, function (bar) {
-                return bar.value;
+                return bar;
             });
         }) + paddingTop;
 
@@ -75,65 +79,59 @@ var stackedBarChart = (function () {
                         .domain([0, max_value])
                         .range([0, height - paddingTop]);
 
-        g = svg.selectAll('g')
-            .data(data.stacks)
-            .enter()
-            .append('g');
-
         svg.append('text')
             .attr('x', 5).attr('y', 20)
             .attr('text-anchor', 'start')
             .text(data.title);
 
         /*jslint unparam: true */
-        g.selectAll('rect').data(function (d) {return d; }).enter()
-            .append('rect')
-            .attr('x', function (bar, i, j) {
-                return xScale(j);
+        legend = svg.append('g').classed('legend', true);
+
+        legendItems = legend.selectAll('.legend-item').data(data.legends).enter()
+            .append('g')
+            .classed('legend-item', true);
+
+        legendItems.append('text').text(identityFunction)
+            .attr('y', function (text, i) {return 70 - 20 * i; })
+            .attr('x', width - 100);
+
+        legendItems.append('rect').text(identityFunction)
+            .attr('y', function (text, i) {return 70 - 10 - 20 * i; })
+            .attr('x', width - 120)
+            .attr('fill', function (text, i) {return colors[i % colors.length]; })
+            .attr('width', 10)
+            .attr('height', 10);
+
+        stacks = svg.selectAll('.stack').data(data.stacks).enter()
+                    .append('g')
+                    .classed('stack', true);
+
+
+        bars = stacks.selectAll('.bar').data(identityFunction).enter()
+            .append('g')
+            .classed('bar', true);
+
+        bars.append('rect')
+            .attr('x', function (bar, barIndex, stackIndex) {
+                return xScale(stackIndex);
             })
-            .attr('y', function (bar, i, j) {
+            .attr('y', function (bar, barIndex, stackIndex) {
                 var k, accum = 0;
-                for (k = 0; k <= i; k += 1) {
-                    accum += data.stacks[j][k].value;
+                for (k = 0; k <= barIndex; k += 1) {
+                    accum += data.stacks[stackIndex][k];
                 }
                 return yScale(accum);
             })
-            .attr('height', function (bar) {return heightScale(bar.value); })
+            .attr('height', heightScale)
             .attr('width', barWidth)
-            .attr('fill', function (obj, i) {
-                return colors[i % colors.length];
+            .attr('fill', function (bar, barIndex) {
+                return colors[barIndex % colors.length];
             })
-            .append('title').text(function (obj) {
-                return obj.name;
+            .append('title').text(function (bar) {
+                return bar + ' seg';
             });
-
-        g.selectAll('text').data(function (d) {return d; }).enter()
-            .append('text')
-            .attr('x', function (obj, i, j) {
-                return xScale(j) + barWidth / 2;
-            })
-            .attr('y', function (obj, i, j) {
-                var k, accum = 0;
-                for (k = 0; k <= i; k += 1) {
-                    accum += data.stacks[j][k].value;
-                }
-                return yScale(accum) + 20;
-            })
-            .attr('width', barWidth)
-            .text(function (obj) {
-                return obj.value.toFixed(2);
-            });
-
-        // g.append('text')
-        //     .attr('x', function (obj, i, j) {
-        //         return xScale(j) + barWidth / 2;
-        //     })
-        //     .attr('y', function (obj) {
-        //         return yScale(obj.value) + 35;
-        //     })
-        //     .attr('width', barWidth)
-        //     .text('seg');
         /*jslint unparam: false */
+
     }
 
     return {
