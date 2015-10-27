@@ -26,27 +26,6 @@ var stackedBarChart = (function () {
         };
     }
 
-    function colorScale(domain, range) {
-        // TODO: find out if d3 has a mechanism for defining custom scales
-        var rScale = d3.scale.linear()
-                       .domain(domain)
-                       .range([range[0][0], range[1][0]]),
-            gScale = d3.scale.linear()
-                       .domain(domain)
-                       .range([range[0][1], range[1][2]]),
-            bScale = d3.scale.linear()
-                       .domain(domain)
-                       .range([range[0][2], range[1][2]]);
-        return function (domainValue) {
-            return 'rgb(' + [
-                Math.round(rScale(domainValue)),
-                Math.round(gScale(domainValue)),
-                Math.round(bScale(domainValue)),
-            ].join(', ') + ')';
-        };
-    }
-
-
     function drawBarChart(data) {
 
         var svg,
@@ -54,12 +33,11 @@ var stackedBarChart = (function () {
             height,
             max_value,
             paddingTop = 10,
-            paddingBottom = 30,
             gapBetweenStacks = 2,
             g,
             barWidth,
             heightScale,
-            colorGradientScale,
+            colors,
             xScale,
             yScale;
 
@@ -69,7 +47,6 @@ var stackedBarChart = (function () {
 
         width = svg.node().getBoundingClientRect().width;
         height = svg.node().getBoundingClientRect().height;
-        width = 600;
 
 
         barWidth = ((width + gapBetweenStacks) / data.stacks.length) - gapBetweenStacks;
@@ -81,21 +58,22 @@ var stackedBarChart = (function () {
             });
         }) + paddingTop;
 
-        // TODO: if would be so much better if instead of using 3 elemen lists, colors could be
-        // defined using different color notations like rgb, hex, color names, etc
-        colorGradientScale = colorScale([0, d3.max(data.stacks, function (stack) {return stack.length})], [[10, 75, 60], [255, 75, 60]]);
-
+        colors = [
+            "#174C79",
+            "#2C7286",
+            "#92CE82",
+        ];
         xScale = d3.scale.linear()
                    .domain([0, data.stacks.length])
                    .range([0, width + gapBetweenStacks]);
 
         yScale = d3.scale.linear()
                    .domain([0, max_value])
-                   .range([height - paddingBottom, paddingBottom]);
+                   .range([height, paddingTop]);
 
         heightScale = d3.scale.linear()
                         .domain([0, max_value])
-                        .range([paddingBottom, height - paddingBottom]);
+                        .range([0, height - paddingTop]);
 
         g = svg.selectAll('g')
             .data(data.stacks)
@@ -118,28 +96,33 @@ var stackedBarChart = (function () {
                 for (k = 0; k <= i; k += 1) {
                     accum += data.stacks[j][k].value;
                 }
-                return 300 - accum;
+                return yScale(accum);
             })
-            .attr('height', function (bar) {return bar.value; })
+            .attr('height', function (bar) {return heightScale(bar.value); })
             .attr('width', barWidth)
             .attr('fill', function (obj, i) {
-                return colorGradientScale(i);
+                return colors[i % colors.length];
             })
             .append('title').text(function (obj) {
                 return obj.name;
             });
 
-        // g.append('text')
-        //     .attr('x', function (obj, i, j) {
-        //         return xScale(j) + barWidth / 2;
-        //     })
-        //     .attr('y', function (obj) {
-        //         return yScale(obj.value) + 20;
-        //     })
-        //     .attr('width', barWidth)
-        //     .text(function (obj) {
-        //         return obj.value.toFixed(2);
-        //     });
+        g.selectAll('text').data(function (d) {return d; }).enter()
+            .append('text')
+            .attr('x', function (obj, i, j) {
+                return xScale(j) + barWidth / 2;
+            })
+            .attr('y', function (obj, i, j) {
+                var k, accum = 0;
+                for (k = 0; k <= i; k += 1) {
+                    accum += data.stacks[j][k].value;
+                }
+                return yScale(accum) + 20;
+            })
+            .attr('width', barWidth)
+            .text(function (obj) {
+                return obj.value.toFixed(2);
+            });
 
         // g.append('text')
         //     .attr('x', function (obj, i, j) {
