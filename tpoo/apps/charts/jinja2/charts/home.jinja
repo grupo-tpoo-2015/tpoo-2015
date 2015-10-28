@@ -5,7 +5,20 @@
         <title>D3 Test</title>
     </head>
     <body>
-        <a href="{{ url('stacked_bar_chart') }}">Probando: gráfico de barras apiladas</a>
+
+        <h3>Gráficos de barras apiladas por test de usabilidad</h3>
+        <p>
+            Para cada tests de usabilidad se muestran los tiempos totales de cada tarea, comparados
+            entre las distintas versiones.
+        </p>
+        <ul>
+        {% for usability_test in usability_tests %}
+            <li>
+                <a href="{{ url('stacked_bar_chart', args=[usability_test.id]) }}">{{ usability_test.name }}</a>
+            </li>
+        {% endfor %}
+        </ul>
+
         <h3>Gráficos de barras por participante</h3>
         <p>
             Para cada participante se muestran los tiempos que le llevó cada tarea.
@@ -19,5 +32,4 @@
         </ul>
 
     </body>
-
 </html>

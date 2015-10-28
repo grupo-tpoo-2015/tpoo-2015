@@ -6,33 +6,13 @@ var stackedBarChart = (function () {
 
     'use strict';
 
-    function getAndScale() {
-        var args = arguments,
-            scale = args[0];
-        return function (obj) {
-            var i,
-                attr,
-                data = obj;
-            for (i = 1; i < args.length; i += 1) {
-                attr = args[i];
-                if (typeof attr === "string" && attr.slice(-2) === '()') {
-                    data = data[attr.slice(0, -2)]();
-                } else {
-                    data = data[attr];
-                }
-
-            }
-            return scale(data);
-        };
-    }
-
-    function drawBarChart(data) {
+    function drawBarChart(dataset) {
 
         var svg,
             width,
             height,
             max_value,
-            paddingTop = 50,
+            paddingTop = 100 + dataset.legends.length * 35,
             gapBetweenStacks = 2,
             stacks,
             bars,
@@ -53,22 +33,22 @@ var stackedBarChart = (function () {
         height = svg.node().getBoundingClientRect().height;
 
 
-        barWidth = ((width + gapBetweenStacks) / data.stacks.length) - gapBetweenStacks;
+        barWidth = ((width + gapBetweenStacks) / dataset.items.length) - gapBetweenStacks;
 
 
-        max_value = d3.max(data.stacks, function (stack) {
+        max_value = d3.max(dataset.items, function (stack) {
             return d3.sum(stack, function (bar) {
                 return bar;
             });
         }) + paddingTop;
 
         colors = [
-            "#174C79",
+            // "#174C79",
             "#2C7286",
             "#92CE82",
         ];
         xScale = d3.scale.linear()
-                   .domain([0, data.stacks.length])
+                   .domain([0, dataset.items.length])
                    .range([0, width + gapBetweenStacks]);
 
         yScale = d3.scale.linear()
@@ -82,29 +62,31 @@ var stackedBarChart = (function () {
         svg.append('text')
             .attr('x', 5).attr('y', 20)
             .attr('text-anchor', 'start')
-            .text(data.title);
+            .text(dataset.title);
 
         /*jslint unparam: true */
         legend = svg.append('g').classed('legend', true);
 
-        legendItems = legend.selectAll('.legend-item').data(data.legends).enter()
+        legendItems = legend.selectAll('.legend-item').data(dataset.legends).enter()
             .append('g')
             .classed('legend-item', true);
 
         legendItems.append('text').text(identityFunction)
-            .attr('y', function (text, i) {return 70 - 20 * i; })
-            .attr('x', width - 100);
+            .attr('y', function (text, i) {return 15 + 20 * (dataset.legends.length - i); })
+            .attr('x', width - 170);
 
         legendItems.append('rect').text(identityFunction)
-            .attr('y', function (text, i) {return 70 - 10 - 20 * i; })
-            .attr('x', width - 120)
+            .attr('y', function (text, i) {return 15 + 20 * (dataset.legends.length - i) - 10; })
+            .attr('x', width - 170 - 15)
             .attr('fill', function (text, i) {return colors[i % colors.length]; })
             .attr('width', 10)
             .attr('height', 10);
 
-        stacks = svg.selectAll('.stack').data(data.stacks).enter()
+        stacks = svg.selectAll('.stack').data(dataset.items).enter()
                     .append('g')
                     .classed('stack', true);
+
+
 
 
         bars = stacks.selectAll('.bar').data(identityFunction).enter()
@@ -118,7 +100,7 @@ var stackedBarChart = (function () {
             .attr('y', function (bar, barIndex, stackIndex) {
                 var k, accum = 0;
                 for (k = 0; k <= barIndex; k += 1) {
-                    accum += data.stacks[stackIndex][k];
+                    accum += dataset.items[stackIndex][k];
                 }
                 return yScale(accum);
             })
@@ -128,7 +110,19 @@ var stackedBarChart = (function () {
                 return colors[barIndex % colors.length];
             })
             .append('title').text(function (bar) {
-                return bar + ' seg';
+                return bar.toFixed(2) + ' seg';
+            });
+
+        stacks.selectAll('.stack-title').data(dataset.stack_names).enter()
+            .append('foreignObject')
+            .classed('stack-title', true)
+            .attr('x', function (text, stackIndex) {
+                return xScale(stackIndex);
+            })
+            .attr('y', paddingTop - 100)
+            .attr('width', barWidth)
+            .append("xhtml:body").html(function (text) {
+                return '<p>' + text + '</p>';
             });
         /*jslint unparam: false */
 
