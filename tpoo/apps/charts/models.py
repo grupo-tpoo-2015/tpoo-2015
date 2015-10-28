@@ -78,7 +78,9 @@ class CompareTaskBetweenVersionsChart(StackedBarChart):
         self.items = []
         self.stack_names = []
         self.legend_items = [v.name for v in versions]
-        for task, counter in d.iteritems():
+        # TODO: sort key should be order, but id does not exist
+        for task in sorted(d.keys(), key=lambda task: task.name):
+            counter = d[task]
             self.stack_names.append(task.name)
             if len(counter.keys()) == len(versions):
                 self.items.append([counter[app_version] for app_version in versions])

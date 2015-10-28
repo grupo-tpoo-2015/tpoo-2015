@@ -12,7 +12,7 @@ var stackedBarChart = (function () {
             width,
             height,
             max_value,
-            paddingTop = 100 + dataset.legends.length * 35,
+            paddingTop = 120 + dataset.legends.length * 35,
             gapBetweenStacks = 2,
             stacks,
             bars,
@@ -121,6 +121,7 @@ var stackedBarChart = (function () {
             })
             .attr('y', paddingTop - 100)
             .attr('width', barWidth)
+            .style('color', '#999')
             .append("xhtml:body").html(function (text) {
                 return '<p>' + text + '</p>';
             });
