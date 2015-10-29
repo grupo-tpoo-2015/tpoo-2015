@@ -83,7 +83,10 @@ class CompareTaskBetweenVersionsChart(StackedBarChart):
             counter = d[task]
             self.stack_names.append(task.name)
             if len(counter.keys()) == len(versions):
-                self.items.append([counter[app_version] for app_version in versions])
+                self.items.append({
+                    'name': task.name,
+                    'values': [counter[app_version] for app_version in versions],
+                })
 
     def get_title(self):
         return self.usability_test.name

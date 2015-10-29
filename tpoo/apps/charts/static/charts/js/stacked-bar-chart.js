@@ -37,9 +37,7 @@ var stackedBarChart = (function () {
 
 
         max_value = d3.max(dataset.items, function (stack) {
-            return d3.sum(stack, function (bar) {
-                return bar;
-            });
+            return d3.sum(stack.values);
         }) + paddingTop;
 
         colors = [
@@ -86,10 +84,19 @@ var stackedBarChart = (function () {
                     .append('g')
                     .classed('stack', true);
 
+        stacks.append('foreignObject')
+            .classed('stack-title', true)
+            .attr('x', function (stack, stackIndex) {
+                return xScale(stackIndex);
+            })
+            .attr('y', paddingTop - 100)
+            .attr('width', barWidth)
+            .style('color', '#999')
+            .append("xhtml:body").html(function (stack) {
+                return '<p>' + stack.name + '</p>';
+            });
 
-
-
-        bars = stacks.selectAll('.bar').data(identityFunction).enter()
+        bars = stacks.selectAll('.bar').data(function (d) {return d.values; }).enter()
             .append('g')
             .classed('bar', true);
 
@@ -100,7 +107,7 @@ var stackedBarChart = (function () {
             .attr('y', function (bar, barIndex, stackIndex) {
                 var k, accum = 0;
                 for (k = 0; k <= barIndex; k += 1) {
-                    accum += dataset.items[stackIndex][k];
+                    accum += dataset.items[stackIndex].values[k];
                 }
                 return yScale(accum);
             })
@@ -113,18 +120,6 @@ var stackedBarChart = (function () {
                 return bar.toFixed(2) + ' seg';
             });
 
-        stacks.selectAll('.stack-title').data(dataset.stack_names).enter()
-            .append('foreignObject')
-            .classed('stack-title', true)
-            .attr('x', function (text, stackIndex) {
-                return xScale(stackIndex);
-            })
-            .attr('y', paddingTop - 100)
-            .attr('width', barWidth)
-            .style('color', '#999')
-            .append("xhtml:body").html(function (text) {
-                return '<p>' + text + '</p>';
-            });
         /*jslint unparam: false */
 
     }
