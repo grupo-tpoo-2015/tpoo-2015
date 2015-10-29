@@ -67,25 +67,29 @@ class CompareTaskBetweenVersionsChart(StackedBarChart):
             observation_type=time_type,
         )
 
-        versions = sorted(usability_test.versions.all())
+        versions = list(usability_test.versions.order_by('id'))
 
-        d = defaultdict(lambda: Counter())
+        total_times = defaultdict(lambda: Counter())
+        participants_sets = defaultdict(lambda: defaultdict(lambda: set()))
         for o in obs:
             scenario_task = o.step_execution.interaction_step.scenario_task
-            d[scenario_task.task][scenario_task.scenario.app_version] += o.value
-        self.d = d
+            total_times[scenario_task.task][scenario_task.scenario.app_version] += o.value
+            participant = o.step_execution.task_scenario_execution.scenario_execution.participant
+            participants_sets[scenario_task.task][scenario_task.scenario.app_version].add(participant)
 
         self.items = []
         self.stack_names = []
         self.legend_items = [v.name for v in versions]
         # TODO: sort key should be order, but id does not exist
-        for task in sorted(d.keys(), key=lambda task: task.name):
-            counter = d[task]
+        for task in sorted(total_times.keys(), key=lambda task: task.name):
+            counter = total_times[task]
+            sets = participants_sets[task]
             self.stack_names.append(task.name)
             if len(counter.keys()) == len(versions):
                 self.items.append({
                     'name': task.name,
-                    'values': [counter[app_version] for app_version in versions],
+                    'values': [counter[app_version] / float(len(sets[app_version]))
+                               for app_version in versions],
                 })
 
     def get_title(self):
