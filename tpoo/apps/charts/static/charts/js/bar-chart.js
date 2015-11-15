@@ -57,7 +57,8 @@ var barChart = (function () {
         g = svg.selectAll('g')
             .data(dataset.items)
             .enter()
-            .append('g');
+            .append('g')
+            .classed('bar', true);
 
         svg.append('text')
             .attr('x', 5).attr('y', 20)
