@@ -1,0 +1,13 @@
+svg {
+  width: 600px;
+  height: 400px; }
+  svg text {
+    font-family: sans-serif; }
+  svg .bar text {
+    text-anchor: middle;
+    fill: white;
+    font-size: 13px; }
+  svg .bar:hover {
+    opacity: 0.9; }
+
+/*# sourceMappingURL=styles.css.map */

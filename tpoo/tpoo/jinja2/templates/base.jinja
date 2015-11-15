@@ -3,23 +3,7 @@
     <head>
         <meta charset="utf-8">
         <title>D3 Test</title>
-        <style>
-        svg text {
-            font-family: sans-serif;
-        }
-        svg .bar text {
-            text-anchor: middle;
-            fill: white;
-            font-size: 13px;
-        }
-        svg .bar:hover {
-            opacity: 0.9;
-        }
-        svg {
-            width: 600px;
-            height: 400px;
-        }
-        </style>
+        <link rel="stylesheet" href="{{ static('css/styles.css') }}">
         {% block css %}{% endblock %}
     </head>
     <body>
