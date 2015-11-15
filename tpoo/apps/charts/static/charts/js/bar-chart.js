@@ -1,50 +1,11 @@
 /*globals
     d3,
+    utils,
 */
 
 var barChart = (function () {
 
     'use strict';
-
-    function getAndScale() {
-        var args = arguments,
-            scale = args[0];
-        return function (obj) {
-            var i,
-                attr,
-                data = obj;
-            for (i = 1; i < args.length; i += 1) {
-                attr = args[i];
-                if (typeof attr === "string" && attr.slice(-2) === '()') {
-                    data = data[attr.slice(0, -2)]();
-                } else {
-                    data = data[attr];
-                }
-
-            }
-            return scale(data);
-        };
-    }
-
-    function colorScale(domain, range) {
-        // TODO: find out if d3 has a mechanism for defining custom scales
-        var rScale = d3.scale.linear()
-                       .domain(domain)
-                       .range([range[0][0], range[1][0]]),
-            gScale = d3.scale.linear()
-                       .domain(domain)
-                       .range([range[0][1], range[1][2]]),
-            bScale = d3.scale.linear()
-                       .domain(domain)
-                       .range([range[0][2], range[1][2]]);
-        return function (domainValue) {
-            return 'rgb(' + [
-                Math.round(rScale(domainValue)),
-                Math.round(gScale(domainValue)),
-                Math.round(bScale(domainValue)),
-            ].join(', ') + ')';
-        };
-    }
 
 
     function drawBarChart(dataset) {
@@ -58,7 +19,7 @@ var barChart = (function () {
             g,
             barWidth,
             heightScale,
-            colorGradientScale,
+            colorScale,
             xScale,
             yScale;
 
@@ -80,7 +41,7 @@ var barChart = (function () {
 
         // TODO: if would be so much better if instead of using 3 elemen lists, colors could be
         // defined using different color notations like rgb, hex, color names, etc
-        colorGradientScale = colorScale([0, max_value], [[10, 75, 60], [255, 75, 60]]);
+        colorScale = utils.buildColorScale([0, max_value], [[10, 75, 60], [255, 75, 60]]);
 
         xScale = d3.scale.linear()
                    .domain([0, dataset.items.length])
@@ -110,11 +71,11 @@ var barChart = (function () {
             .attr('x', function (obj, i) {
                 return xScale(i);
             })
-            .attr('y', getAndScale(yScale, 'value'))
-            .attr('height', getAndScale(heightScale, 'value'))
+            .attr('y', utils.getAndScale(yScale, 'value'))
+            .attr('height', utils.getAndScale(heightScale, 'value'))
             .attr('width', barWidth)
             .attr('fill', function (obj, i) {
-                return colorGradientScale(obj.value);
+                return colorScale(obj.value);
             })
             .append('title').text(function (obj) {
                 return obj.name;

@@ -1,5 +1,6 @@
 /*globals
     d3,
+    utils,
 */
 
 var stackedBarChart = (function () {
@@ -18,7 +19,6 @@ var stackedBarChart = (function () {
             bars,
             legend,
             legendItems,
-            identityFunction = function (x) {return x; },
             barWidth,
             heightScale,
             colors,
@@ -69,11 +69,11 @@ var stackedBarChart = (function () {
             .append('g')
             .classed('legend-item', true);
 
-        legendItems.append('text').text(identityFunction)
+        legendItems.append('text').text(utils.identityFunction)
             .attr('y', function (text, i) {return 15 + 20 * (dataset.legends.length - i); })
             .attr('x', width - 170);
 
-        legendItems.append('rect').text(identityFunction)
+        legendItems.append('rect').text(utils.identityFunction)
             .attr('y', function (text, i) {return 15 + 20 * (dataset.legends.length - i) - 10; })
             .attr('x', width - 170 - 15)
             .attr('fill', function (text, i) {return colors[i % colors.length]; })
