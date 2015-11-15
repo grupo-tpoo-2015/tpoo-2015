@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+        <title>D3 Test</title>
+        {% block css %}{% endblock %}
+    </head>
+    <body>
+        {% block content %}{% endblock %}
+        <script type="text/javascript" src="{{ static('lib/d3/d3.v3.js') }}"></script>
+        <script type="text/javascript" src="{{ static('lib/tinycolor/tinycolor-min.js') }}"></script>
+        <script type="text/javascript" src="{{ static('charts/js/utils.js') }}"></script>
+        {% block js %}{% endblock %}
+        {% block js_init %}{% endblock %}
+        </script>
+    </body>
+</html>

@@ -1,37 +1,37 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>D3 Test</title>
-        <style>
-        svg text {
-            font-family: sans-serif;
-        }
-        svg .bar text {
-            text-anchor: middle;
-            fill: white;
-            font-size: 13px;
-        }
-        svg .bar:hover {
-            opacity: 0.9;
-        }
-        svg {
-            width: 600px;
-            height: 400px;
-        }
-        </style>
-    </head>
-    <body>
-        <svg></svg>
-        <script type="text/javascript" src="{{ static('lib/d3/d3.v3.js') }}"></script>
-        <script type="text/javascript" src="{{ static('lib/tinycolor/tinycolor-min.js') }}"></script>
-        <script type="text/javascript" src="{{ static('charts/js/utils.js') }}"></script>
-        <script type="text/javascript" src="{{ static('charts/js/stacked-bar-chart.js') }}"></script>
-        <script>
-            stackedBarChart.init({
-                dataset: {{ jsonify(dataset) }},
-            });
-        </script>
-    </body>
+{% extends "base.jinja" %}
 
-</html>
+{% block css %}
+<style>
+    svg text {
+        font-family: sans-serif;
+    }
+    svg .bar text {
+        text-anchor: middle;
+        fill: white;
+        font-size: 13px;
+    }
+    svg .bar:hover {
+        opacity: 0.9;
+    }
+    svg {
+        width: 600px;
+        height: 400px;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<svg></svg>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript" src="{{ static('charts/js/stacked-bar-chart.js') }}"></script>
+{% endblock %}
+
+{% block js_init %}
+<script>
+    stackedBarChart.init({
+        dataset: {{ jsonify(dataset) }},
+    });
+</script>
+{% endblock %}
