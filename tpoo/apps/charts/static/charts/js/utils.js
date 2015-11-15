@@ -1,5 +1,6 @@
 /*globals
     d3,
+    tinycolor,
 */
 
 var utils = (function () {
@@ -12,21 +13,26 @@ var utils = (function () {
         },
         buildColorScale: function (domain, range) {
             // TODO: find out if d3 has a mechanism for defining custom scales
-            var rScale = d3.scale.linear()
+            var fromColor = tinycolor(range[0]),
+                toColor = tinycolor(range[1]),
+                fromColorRGB = fromColor.toRgb(),
+                toColorRGB = toColor.toRgb(),
+                rScale = d3.scale.linear()
                            .domain(domain)
-                           .range([range[0][0], range[1][0]]),
+                           .range([fromColorRGB.r, toColorRGB.r]),
                 gScale = d3.scale.linear()
                            .domain(domain)
-                           .range([range[0][1], range[1][2]]),
+                           .range([fromColorRGB.g, toColorRGB.g]),
                 bScale = d3.scale.linear()
                            .domain(domain)
-                           .range([range[0][2], range[1][2]]);
+                           .range([fromColorRGB.b, toColorRGB.b]);
+
             return function (domainValue) {
-                return 'rgb(' + [
-                    Math.round(rScale(domainValue)),
-                    Math.round(gScale(domainValue)),
-                    Math.round(bScale(domainValue)),
-                ].join(', ') + ')';
+                return "#" + tinycolor.fromRatio({
+                    r: Math.round(rScale(domainValue)),
+                    g: Math.round(gScale(domainValue)),
+                    b: Math.round(bScale(domainValue))
+                }).toHex();
             };
         },
         getAndScale: function () {

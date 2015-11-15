@@ -39,9 +39,7 @@ var barChart = (function () {
             return obj.value;
         }) + paddingTop;
 
-        // TODO: if would be so much better if instead of using 3 elemen lists, colors could be
-        // defined using different color notations like rgb, hex, color names, etc
-        colorScale = utils.buildColorScale([0, max_value], [[10, 75, 60], [255, 75, 60]]);
+        colorScale = utils.buildColorScale([0, max_value], ['rgb(10, 75, 60)', 'rgb(255, 75, 60)']);
 
         xScale = d3.scale.linear()
                    .domain([0, dataset.items.length])
