@@ -12,7 +12,7 @@ var stackedBarChart = (function () {
             width,
             height,
             max_value,
-            paddingTop = 120 + dataset.legends.length * 35,
+            paddingTop = dataset.legends.length * 35,
             gapBetweenStacks = 2,
             stacks,
             bars,
@@ -84,17 +84,17 @@ var stackedBarChart = (function () {
                     .append('g')
                     .classed('stack', true);
 
-        stacks.append('foreignObject')
-            .classed('stack-title', true)
-            .attr('x', function (stack, stackIndex) {
-                return xScale(stackIndex);
-            })
-            .attr('y', paddingTop - 100)
-            .attr('width', barWidth)
-            .style('color', '#999')
-            .append("xhtml:body").html(function (stack) {
-                return '<p>' + stack.name + '</p>';
-            });
+        // stacks.append('foreignObject')
+        //     .classed('stack-title', true)
+        //     .attr('x', function (stack, stackIndex) {
+        //         return xScale(stackIndex);
+        //     })
+        //     .attr('y', paddingTop - 100)
+        //     .attr('width', barWidth)
+        //     .style('color', '#999')
+        //     .append("xhtml:body").html(function (stack) {
+        //         return '<p>' + stack.name + '</p>';
+        //     });
 
         bars = stacks.selectAll('.bar').data(function (d) {return d.values; }).enter()
             .append('g')
@@ -116,9 +116,41 @@ var stackedBarChart = (function () {
             .attr('fill', function (bar, barIndex) {
                 return colors[barIndex % colors.length];
             })
-            .append('title').text(function (bar) {
-                return bar.toFixed(2) + ' seg';
+            .append('title').text(function (bar, barIndex, stackIndex) {
+                return dataset.items[stackIndex].name;
             });
+
+        bars.append('text')
+            .attr('x', function (bar, barIndex, stackIndex) {
+                return xScale(stackIndex) + barWidth / 2;
+            })
+            .attr('y', function (bar, barIndex, stackIndex) {
+                var k, accum = 0;
+                for (k = 0; k <= barIndex; k += 1) {
+                    accum += dataset.items[stackIndex].values[k];
+                }
+                return yScale(accum) + 20;
+            })
+            .attr('height', heightScale)
+            .attr('width', barWidth)
+            .text(function (value) {
+                return value.toFixed(2);
+            });
+
+        bars.append('text')
+            .attr('x', function (bar, barIndex, stackIndex) {
+                return xScale(stackIndex) + barWidth / 2;
+            })
+            .attr('height', heightScale)
+            .attr('y', function (bar, barIndex, stackIndex) {
+                var k, accum = 0;
+                for (k = 0; k <= barIndex; k += 1) {
+                    accum += dataset.items[stackIndex].values[k];
+                }
+                return yScale(accum) + 35;
+            })
+            .attr('width', barWidth)
+            .text('seg');
 
         /*jslint unparam: false */
 
