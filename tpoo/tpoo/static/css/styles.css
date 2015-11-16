@@ -1,13 +1,14 @@
-svg {
+.chart {
+  background: white;
   width: 600px;
   height: 400px; }
-  svg text {
+  .chart text {
     font-family: sans-serif; }
-  svg .bar text {
+  .chart .bar text {
     text-anchor: middle;
     fill: white;
     font-size: 13px; }
-  svg .bar:hover {
+  .chart .bar:hover {
     opacity: 0.9; }
 
 /*# sourceMappingURL=styles.css.map */

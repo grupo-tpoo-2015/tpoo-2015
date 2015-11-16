@@ -1,35 +1,28 @@
-<!DOCTYPE html>
-<html lang="en">
-    <head>
-        <meta charset="utf-8">
-        <title>D3 Test</title>
-    </head>
-    <body>
+{% extends "base.jinja" %}
 
-        <h3>Gráficos de barras apiladas por test de usabilidad</h3>
-        <p>
-            Para cada tests de usabilidad se muestran los tiempos totales de cada tarea, comparados
-            entre las distintas versiones.
-        </p>
-        <ul>
-        {% for usability_test in usability_tests %}
-            <li>
-                <a href="{{ url('stacked_bar_chart', args=[usability_test.id]) }}">{{ usability_test.name }}</a>
-            </li>
-        {% endfor %}
-        </ul>
+{% block content %}
+    <h3>Gráficos de barras apiladas por test de usabilidad</h3>
+    <p>
+        Para cada tests de usabilidad se muestran los tiempos totales de cada tarea, comparados
+        entre las distintas versiones.
+    </p>
+    <ul>
+    {% for usability_test in usability_tests %}
+        <li>
+            <a href="{{ url('stacked_bar_chart', args=[usability_test.id]) }}">{{ usability_test.name }}</a>
+        </li>
+    {% endfor %}
+    </ul>
 
-        <h3>Gráficos de barras por participante</h3>
-        <p>
-            Para cada participante se muestran los tiempos que le llevó cada tarea.
-        </p>
-        <ul>
-        {% for participant in participants %}
-            <li>
-                <a href="{{ url('bar_chart', args=[participant.id]) }}">{{ participant.name }}</a>
-            </li>
-        {% endfor %}
-        </ul>
-
-    </body>
-</html>
+    <h3>Gráficos de barras por participante</h3>
+    <p>
+        Para cada participante se muestran los tiempos que le llevó cada tarea.
+    </p>
+    <ul>
+    {% for participant in participants %}
+        <li>
+            <a href="{{ url('bar_chart', args=[participant.id]) }}">{{ participant.name }}</a>
+        </li>
+    {% endfor %}
+    </ul>
+{% endblock %}

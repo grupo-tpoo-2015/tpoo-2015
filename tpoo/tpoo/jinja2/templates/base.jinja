@@ -1,18 +1,38 @@
 <!DOCTYPE html>
 <html lang="en">
+
     <head>
         <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
         <title>D3 Test</title>
-        <link rel="stylesheet" href="{{ static('css/styles.css') }}">
+
+        <link rel="stylesheet" type="text/css" href="{{ static('lib/sb-admin/css/bootstrap.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ static('lib/sb-admin/css/sb-admin.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ static('lib/sb-admin/font-awesome/css/font-awesome.min.css') }}">
+        <link rel="stylesheet" type="text/css" href="{{ static('css/styles.css') }}">
         {% block css %}{% endblock %}
     </head>
+
     <body>
-        {% block content %}{% endblock %}
+
+        <div id="wrapper">
+            {% include 'nav.jinja' %}
+            <div id="page-wrapper">
+                <div class="container-fluid">
+                    {% block content %}{% endblock %}
+                </div>
+            </div>
+        </div>
+
         <script type="text/javascript" src="{{ static('lib/d3/d3.v3.js') }}"></script>
         <script type="text/javascript" src="{{ static('lib/tinycolor/tinycolor-min.js') }}"></script>
+        <script type="text/javascript" src="{{ static('lib/sb-admin/js/jquery.js') }}"></script>
+        <script type="text/javascript" src="{{ static('lib/sb-admin/js/bootstrap.min.js') }}"></script>
         <script type="text/javascript" src="{{ static('charts/js/utils.js') }}"></script>
         {% block js %}{% endblock %}
         {% block js_init %}{% endblock %}
         </script>
     </body>
+
 </html>
