@@ -16,25 +16,12 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls import include, url
 from django.conf.urls.static import static
-from django.contrib import admin
-from django.contrib.auth import views as auth_views
 
 urlpatterns = [
-
-    # url(r'^admin/', include(admin.site.urls)),
-
-    url(r'^login/$', auth_views.login, {'template_name': 'users/login.jinja'}, name='login'),
-    url(r'^logout/$', auth_views.logout_then_login, name='logout'),
-    url(r'^register/$', 'users.views.register', name='register'),
+    url(r'^', include('users.urls')),
+    url(r'^', include('charts.urls')),
     url(r'^$', 'charts.views.home', name='home'),
-
-    url(r'^bar_chart/(?P<participant_id>\d+)$',
-        'charts.views.bar_chart',
-        name='bar_chart'),
-
-    url(r'^stacked_bar_chart/(?P<usability_test_id>\d+)$',
-        'charts.views.stacked_bar_chart',
-        name='stacked_bar_chart'),
+    url(r'^load/$', 'usability_tests.views.load', name='load'),
 ]
 
 if settings.DEBUG:

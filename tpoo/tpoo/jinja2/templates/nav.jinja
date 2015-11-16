@@ -26,14 +26,11 @@
     <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
     <div class="collapse navbar-collapse navbar-ex1-collapse">
         <ul class="nav navbar-nav side-nav">
-            <li {% if dashboard_active %}class="active"{% endif %}>
-                <a href="index.html"><i class="fa fa-fw fa-dashboard"></i> Dashboard</a>
-            </li>
             <li {% if charts_active %}class="active"{% endif %}>
-                <a href="charts.html"><i class="fa fa-fw fa-bar-chart-o"></i> Gráficos</a>
+                <a href="{{ url('home') }}"><i class="fa fa-fw fa-bar-chart-o"></i> Gráficos</a>
             </li>
-            <li {% if new_data_active %}class="active"{% endif %}>
-                <a href="tables.html"><i class="fa fa-fw fa-plus"></i> Agregar nuevos datos</a>
+            <li {% if load_data_active %}class="active"{% endif %}>
+                <a href="{{ url('load') }}"><i class="fa fa-fw fa-plus"></i> Agregar nuevos datos</a>
             </li>
         </ul>
     </div>
