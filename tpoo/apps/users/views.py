@@ -24,11 +24,5 @@ def login(request):
     return render(request, 'users/login.jinja')
 
 
-def profile(request):
-    return render(request, 'users/profile.jinja', {
-        'user': request.user,
-    })
-
-
 def logout(request):
     return logout_then_login(request)
