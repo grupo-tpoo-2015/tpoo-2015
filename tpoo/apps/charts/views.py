@@ -1,11 +1,9 @@
-import random
-
 from django.shortcuts import render, get_object_or_404
 from django.contrib.auth.decorators import login_required
 
 from usability_tests.models import UsabilityTest
 from usability_tests_executions.models import Participant
-from .models import ParticipantTimesPerTaskBarChart, CompareTaskBetweenVersionsChart
+from .charts import ParticipantTimesPerTaskBarChart, CompareTaskBetweenVersionsChart
 
 
 @login_required
