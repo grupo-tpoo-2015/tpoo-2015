@@ -7,10 +7,9 @@ var stackedBarChart = (function () {
 
     'use strict';
 
-    function drawBarChart(dataset) {
+    function draw(svg, dataset) {
 
-        var svg,
-            width,
+        var width,
             height,
             max_value,
             paddingTop = dataset.legends.length * 35,
@@ -24,10 +23,6 @@ var stackedBarChart = (function () {
             colors,
             xScale,
             yScale;
-
-        svg = d3.select('svg')
-            .style('border', 'solid black')
-            .style('margin', '10px');
 
         width = svg.node().getBoundingClientRect().width;
         height = svg.node().getBoundingClientRect().height;
@@ -56,11 +51,6 @@ var stackedBarChart = (function () {
         heightScale = d3.scale.linear()
                         .domain([0, max_value])
                         .range([0, height - paddingTop]);
-
-        svg.append('text')
-            .attr('x', 5).attr('y', 20)
-            .attr('text-anchor', 'start')
-            .text(dataset.title);
 
         /*jslint unparam: true */
         legend = svg.append('g').classed('legend', true);
@@ -133,9 +123,7 @@ var stackedBarChart = (function () {
     }
 
     return {
-        init: function (params) {
-            drawBarChart(params.dataset);
-        }
+        draw: draw,
     };
 
 }());

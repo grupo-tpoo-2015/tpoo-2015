@@ -1,7 +1,20 @@
 {% extends "base.jinja" %}
 
 {% block content %}
-<svg class="chart"></svg>
+
+{% for dataset in datasets %}
+<div class="col-md-6">
+    <div class="panel panel-default chart-container">
+        <div class="panel-heading">
+            <h3 class="panel-title">{{ dataset['title'] }}</h3>
+        </div>
+        <div class="panel-body">
+            <svg id="chart-{{ loop.index }}" class="chart"></svg>
+        </div>
+    </div>
+</div>
+{% endfor %}
+
 {% endblock %}
 
 {% block js %}
@@ -10,8 +23,11 @@
 
 {% block js_init %}
 <script>
-    stackedBarChart.init({
-        dataset: {{ jsonify(dataset) }},
-    });
+
+
+    {% for dataset in datasets %}
+    stackedBarChart.draw(d3.select("#chart-{{ loop.index }}"), {{ jsonify(dataset) }});
+    {% endfor %}
+
 </script>
 {% endblock %}

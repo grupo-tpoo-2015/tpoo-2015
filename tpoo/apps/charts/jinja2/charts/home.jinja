@@ -6,13 +6,18 @@
         Para cada tests de usabilidad se muestran los tiempos totales de cada tarea, comparados
         entre las distintas versiones.
     </p>
-    <ul>
-    {% for usability_test in usability_tests %}
-        <li>
-            <a href="{{ url('stacked_bar_chart', args=[usability_test.id]) }}">{{ usability_test.name }}</a>
-        </li>
+    {% for dataset in datasets %}
+    <div class="col-md-6">
+        <div class="panel panel-default chart-container">
+            <div class="panel-heading">
+                <h3 class="panel-title">{{ dataset['title'] }}</h3>
+            </div>
+            <div class="panel-body">
+                <svg id="chart-{{ loop.index }}" class="chart"></svg>
+            </div>
+        </div>
+    </div>
     {% endfor %}
-    </ul>
 
     <h3>Gráficos de barras por participante</h3>
     <p>
@@ -25,4 +30,19 @@
         </li>
     {% endfor %}
     </ul>
+{% endblock %}
+
+{% block js %}
+<script type="text/javascript" src="{{ static('charts/js/stacked-bar-chart.js') }}"></script>
+{% endblock %}
+
+{% block js_init %}
+<script>
+
+
+    {% for dataset in datasets %}
+    stackedBarChart.draw(d3.select("#chart-{{ loop.index }}"), {{ jsonify(dataset) }});
+    {% endfor %}
+
+</script>
 {% endblock %}

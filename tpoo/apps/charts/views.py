@@ -8,7 +8,13 @@ from .charts import ParticipantTimesPerTaskBarChart, CompareTaskBetweenVersionsC
 
 @login_required
 def home(request):
+
+    datasets = []
+    for usability_test in UsabilityTest.objects.all():
+        datasets.append(CompareTaskBetweenVersionsChart.get(usability_test).as_dict())
+
     return render(request, 'charts/home.jinja', {
+        'datasets': datasets,
         'participants': Participant.objects.all(),
         'usability_tests': UsabilityTest.objects.all(),
         'charts_active': True,
@@ -22,16 +28,5 @@ def bar_chart(request, participant_id):
 
     return render(request, 'charts/bar_chart.jinja', {
         'dataset': ParticipantTimesPerTaskBarChart(participant).as_dict(),
-        'charts_active': True,
-    })
-
-
-@login_required
-def stacked_bar_chart(request, usability_test_id):
-
-    usability_test = get_object_or_404(UsabilityTest, id=usability_test_id)
-
-    return render(request, 'charts/stacked_bar_chart.jinja', {
-        'dataset': CompareTaskBetweenVersionsChart.get(usability_test).as_dict(),
         'charts_active': True,
     })
