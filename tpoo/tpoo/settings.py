@@ -45,6 +45,7 @@ INSTALLED_APPS = (
     'django_extensions',
     'django_jinja',
 
+    'users',
     'usability_tests',
     'usability_tests_executions',
     'tasks',
@@ -138,3 +139,6 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/1.8/howto/static-files/
 
 STATIC_URL = '/static/'
+
+LOGIN_URL = '/login/'
+LOGIN_REDIRECT_URL = '/'

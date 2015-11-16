@@ -1,10 +1,14 @@
 import random
+
 from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+
 from usability_tests.models import UsabilityTest
 from usability_tests_executions.models import Participant
 from .models import ParticipantTimesPerTaskBarChart, CompareTaskBetweenVersionsChart
 
 
+@login_required
 def home(request):
     return render(request, 'charts/home.jinja', {
         'participants': Participant.objects.all(),
@@ -12,6 +16,7 @@ def home(request):
     })
 
 
+@login_required
 def bar_chart(request, participant_id):
 
     participant = get_object_or_404(Participant, id=participant_id)
@@ -21,6 +26,7 @@ def bar_chart(request, participant_id):
     })
 
 
+@login_required
 def stacked_bar_chart(request, usability_test_id):
 
     usability_test = get_object_or_404(UsabilityTest, id=usability_test_id)
