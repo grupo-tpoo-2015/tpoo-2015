@@ -6,6 +6,7 @@ from django.contrib.auth.models import User
 class UsabilityTest(models.Model):
     owner = models.ForeignKey(User, related_name='usability_tests')
     name = models.CharField(max_length=64)
+    legacy_id = models.PositiveSmallIntegerField(default=0)
 
     def __unicode__(self):
         return self.name
