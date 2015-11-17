@@ -1,35 +1,40 @@
 {% extends "base.jinja" %}
 
 {% block content %}
-    <h3>Gráficos de barras apiladas por test de usabilidad</h3>
-    <p>
-        Para cada tests de usabilidad se muestran los tiempos totales de cada tarea, comparados
-        entre las distintas versiones.
-    </p>
-    {% for dataset in datasets %}
-    <div class="col-md-6">
-        <div class="panel panel-default chart-container">
-            <div class="panel-heading">
-                <h3 class="panel-title">{{ dataset['title'] }}</h3>
-            </div>
-            <div class="panel-body">
-                <svg id="chart-{{ loop.index }}" class="chart"></svg>
+    {% if datasets %}
+
+        <h3>Gráficos de barras apiladas por test de usabilidad</h3>
+        <p>
+            Para cada tests de usabilidad se muestran los tiempos totales de cada tarea, comparados
+            entre las distintas versiones.
+        </p>
+        {% for dataset in datasets %}
+        <div class="col-md-6">
+            <div class="panel panel-default chart-container">
+                <div class="panel-heading">
+                    <h3 class="panel-title">{{ dataset['title'] }}</h3>
+                </div>
+                <div class="panel-body">
+                    <svg id="chart-{{ loop.index }}" class="chart"></svg>
+                </div>
             </div>
         </div>
-    </div>
-    {% endfor %}
+        {% endfor %}
 
-    <h3>Gráficos de barras por participante</h3>
-    <p>
-        Para cada participante se muestran los tiempos que le llevó cada tarea.
-    </p>
-    <ul>
-    {% for participant in participants %}
-        <li>
-            <a href="{{ url('bar_chart', args=[participant.id]) }}">{{ participant.name }}</a>
-        </li>
-    {% endfor %}
-    </ul>
+        <h3>Gráficos de barras por participante</h3>
+        <p>
+            Para cada participante se muestran los tiempos que le llevó cada tarea.
+        </p>
+        <ul>
+        {% for participant in participants %}
+            <li>
+                <a href="{{ url('bar_chart', args=[participant.id]) }}">{{ participant.name }}</a>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay datos para mostrar</p>
+    {% endif %}
 {% endblock %}
 
 {% block js %}
