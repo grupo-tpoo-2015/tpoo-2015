@@ -6,7 +6,7 @@ from usability_tests_executions.models import TaskScenarioExecution, Observation
 from tasks.models import ObservationType
 
 
-time_type = ObservationType.objects.get(name='time')
+time_type, _ = ObservationType.objects.get_or_create(name='time', unit='seconds')
 
 
 class Chart(object):

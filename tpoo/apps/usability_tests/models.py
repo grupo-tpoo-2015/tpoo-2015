@@ -2,11 +2,19 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
+class SqlDump(models.Model):
+    name = models.CharField(max_length=64, null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    uploaded_by = models.ForeignKey(User)
+    script_file = models.FileField(upload_to='dumps')
+
+
 # esto en realidad es App
 class UsabilityTest(models.Model):
     owner = models.ForeignKey(User, related_name='usability_tests')
     name = models.CharField(max_length=64)
     legacy_id = models.PositiveSmallIntegerField(default=0)
+    dump = models.ForeignKey(SqlDump, null=True, blank=True)
 
     def __unicode__(self):
         return self.name
@@ -41,4 +49,3 @@ class Scenario(models.Model):
 
     def __unicode__(self):
         return self.name
-

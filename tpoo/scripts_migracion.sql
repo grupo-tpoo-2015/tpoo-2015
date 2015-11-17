@@ -4,7 +4,7 @@ select user_id, user_name
 from tpoodump.users;
 
 /*migra usability tests*/
-SET @idSuperUser = 
+SET @idSuperUser =
 (select min(id)
  from auth_user
  where is_superuser);
@@ -33,7 +33,7 @@ where name not like "%Non Refactored";
 insert into usability_tests_scenario(id, name, app_version_id)
 select S.id, S.name, AV.id
 from tpoodump.scenario S inner join usability_tests_appversion AV on (S.usability_test_id = AV.usability_test_id)
-where (S.name like '%Non Refactored' and AV.name ='Non Refactored') or 
+where (S.name like '%Non Refactored' and AV.name ='Non Refactored') or
 	  (S.name not like '%Non Refactored' and AV.name ='Refactored');
 
 /*migra refactorings*/
@@ -46,7 +46,7 @@ insert into tasks_scenariotask(id,scenario_id, task_id)
 select id, scenario_id, task_id
 from tpoodump.task_version;
 
-/*relacion entre scenario_task y refactoring -many to many, TODO en el modelo 
+/*relacion entre scenario_task y refactoring -many to many, TODO en el modelo
 la relacion entre refactoring y appVersion vuela. Se reemplaza por metodo que hace las queries necesarias
 */
 insert into tasks_scenariotask_refactorings(scenariotask_id, refactoring_id)
@@ -91,19 +91,15 @@ select SE.id, SE.step_id, SE.task_execution_id
 from tpoodump.step_execution SE inner join tpoodump.step S on (SE.step_id = S.id)
 where not(S.question);
 
-/*plantea la observación tiempo*/
-insert into tasks_observationtype(id, name, unit)
-values (1,'time', 'seconds');
-
 /*guarda el observation tiempo para step que no son preguntas*/
 insert into tasks_interactionstep_observation_types(interactionstep_id, observationtype_id)
-select id, 1 /*el tiempo sólo a los que no son question*/ 
+select id, 1 /*el tiempo sólo a los que no son question*/
 from tpoodump.step
 where not question;
 
-insert into usability_tests_executions_observation(`value`, observation_type_id, step_execution_id) 
+insert into usability_tests_executions_observation(`value`, observation_type_id, step_execution_id)
 /*esta consulta agrega el observation_type time */
 select SE.time, 1, SE.id
 from tpoodump.step S inner join tpoodump.step_execution SE on (S.id = SE.step_id)
-where not question 
+where not question
 
