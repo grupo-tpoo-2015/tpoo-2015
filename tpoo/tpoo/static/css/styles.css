@@ -14,4 +14,7 @@
   .chart-container .chart .bar:hover {
     opacity: 0.9; }
 
+#page-wrapper {
+  min-height: 92.5vh; }
+
 /*# sourceMappingURL=styles.css.map */
