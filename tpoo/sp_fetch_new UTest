@@ -1,0 +1,94 @@
+-- --------------------------------------------------------------------------------
+-- Routine DDL
+-- Note: comments before and after the routine body will not be stored by the server
+-- --------------------------------------------------------------------------------
+DELIMITER $$
+
+CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_fetch_new_utests`(idDumpSQL int)
+BEGIN
+
+DECLARE done INT DEFAULT FALSE;
+declare act_legacy_id int;
+declare last_id int;
+declare description text;
+declare s_user_id int;
+declare utest cursor for select id, `name` from tpoodump.usability_test; 
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
+
+/*migrar participantes*/
+insert into usability_tests_executions_participant(name, dump_id)
+select user_name, idDumpSQL
+from tpoodump.users;
+
+/*migra refactorings*/
+insert into usability_tests_refactoring(name, dump_id)
+select name, idDumpSQL
+from tpoodump.refactorings;
+
+SET FOREIGN_KEY_CHECKS = 0;
+/*se queda con id del usuario responsable del ingreso*/
+set s_user_id = (select uploaded_by_id from usability_tests_sqldump where id = idDumpSQL);
+
+OPEN utest;
+
+read_loop: LOOP
+    FETCH utest INTO act_legacy_id, description;
+    
+    IF done THEN
+      LEAVE read_loop;
+    END IF;    
+    
+    /*migro usability test*/
+    insert into usability_tests_usabilitytest(legacy_id, name, owner_id, dump_id)
+	select act_legacy_id, description, s_user_id, idDumpSQL;  
+
+/*retrive last inserted id*/
+	set last_id = LAST_INSERT_ID();
+
+    /*crea las versiones*/
+	insert into usability_tests_appversion(name, usability_test_id)
+	select "Non Refactored", last_id
+	from tpoodump.scenario
+	where (name like "%Non Refactored") and (usability_test_id = act_legacy_id);
+
+	insert into usability_tests_appversion(name, usability_test_id)
+	select "Refactored", last_id
+	from tpoodump.scenario
+	where (name not like "%Non Refactored") and (usability_test_id = act_legacy_id);    
+    
+    /*migra scenarios*/
+	insert into usability_tests_scenario(name, app_version_id, legacy_id)
+	select S.name, AV.id, S.id
+    from tpoodump.scenario S inner join usability_tests_usabilitytest UT on (UT.legacy_id = S.usability_test_id)
+                             inner join usability_tests_appversion AV on (UT.id = AV.usability_test_id)
+
+	where ((S.name like '%Non Refactored' and AV.name ='Non Refactored') or 
+		  (S.name not like '%Non Refactored' and AV.name ='Refactored'))
+      and (S.usability_test_id = act_legacy_id)
+      and (UT.dump_id = idDumpSQL);      
+
+    /*migra tasks*/
+	insert into usability_tests_task(name, usability_test_id, legacy_id)
+	select project_name, last_id, project_id
+	from tpoodump.task
+	where usability_test_id = act_legacy_id;
+
+    /* migra scenario_task, lo que antes era task_for_version */	
+    insert into tasks_scenariotask(scenario_id, task_id)
+	select UST.id as scenario_id, UTT.id as task_id
+    from tpoodump.task_version TV inner join usability_tests_scenario UST on (TV.scenario_id = UST.legacy_id)
+                                  inner join usability_tests_appversion UAV on (UST.app_version_id = UAV.id)
+                                  inner join usability_tests_usabilitytest UT on (UAV.usability_test_id = UT.id)
+                                  inner join usability_tests_task UTT on (UTT.legacy_id = TV.task_id)
+    where (UT.legacy_id = act_legacy_id)  and (UT.dump_id = idDumpSQL);
+
+	
+
+     
+  END LOOP;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
+CLOSE utest;
+
+END

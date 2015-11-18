@@ -30,6 +30,8 @@ class AppVersion(models.Model):
 
 class Refactoring(models.Model):
     name = models.CharField(max_length=64)
+    dump = models.ForeignKey(SqlDump, null=True, blank=True)
+    legacy_id = models.PositiveSmallIntegerField(default=0)
 
     def __unicode__(self):
         return self.name
@@ -38,6 +40,7 @@ class Refactoring(models.Model):
 class Task(models.Model):
     name = models.CharField(max_length=256)
     usability_test = models.ForeignKey(UsabilityTest, related_name='tasks')
+    legacy_id = models.PositiveSmallIntegerField(default=0)
 
     def __unicode__(self):
         return self.name
@@ -46,6 +49,7 @@ class Task(models.Model):
 class Scenario(models.Model):
     name = models.CharField(max_length=64)
     app_version = models.ForeignKey(AppVersion, related_name='scenarios')
-
+    legacy_id = models.PositiveSmallIntegerField(default=0)
+    
     def __unicode__(self):
         return self.name

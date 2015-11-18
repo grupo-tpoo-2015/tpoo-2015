@@ -46,8 +46,15 @@ insert into tasks_scenariotask(id,scenario_id, task_id)
 select id, scenario_id, task_id
 from tpoodump.task_version;
 
+/*migra step que no son preguntas*/
+insert into tasks_interactionstep(id, scenario_task_id, is_question, name, `order`)
+select id, task_version_id, question, name, step_order
+from tpoodump.step S
+where not(S.question);
+
 /*relacion entre scenario_task y refactoring -many to many, TODO en el modelo
-la relacion entre refactoring y appVersion vuela. Se reemplaza por metodo que hace las queries necesarias
+la relacion entre refactoring y appVersion vuela. 
+Se reemplaza por metodo que hace las queries necesarias
 */
 insert into tasks_scenariotask_refactorings(scenariotask_id, refactoring_id)
 select task_version_id, refactoring_id
@@ -68,12 +75,6 @@ select task_version_id, third_refactoring_id
 from tpoodump.step
 where (third_refactoring_id is not null) and (third_refactoring_id <> 0)) T
 group by task_version_id, refactoring_id;
-
-/*migra step que no son preguntas*/
-insert into tasks_interactionstep(id, scenario_task_id, is_question, name, `order`)
-select id, task_version_id, question, name, step_order
-from tpoodump.step S
-where not(S.question);
 
 /*migra scenario execution*/
 insert into usability_tests_executions_scenarioexecution(id, participant_id, scenario_id)

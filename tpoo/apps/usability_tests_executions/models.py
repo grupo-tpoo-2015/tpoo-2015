@@ -1,12 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 from django.db import models
-from usability_tests.models import Scenario
+from usability_tests.models import Scenario, SqlDump
 from tasks.models import ScenarioTask, InteractionStep, ObservationType
 
 
 class Participant(models.Model):
     name = models.CharField(max_length=64)
+    dump = models.ForeignKey(SqlDump, null=True, blank=True)    
 
     def __unicode__(self):
         return self.name
