@@ -1,0 +1,20 @@
+SET FOREIGN_KEY_CHECKS = 0;
+
+truncate table tasks_interactionstep;
+truncate table tasks_interactionstep_observation_types;
+truncate table tasks_observationtype;
+truncate table tasks_scenariotask;
+truncate table tasks_scenariotask_refactorings;
+truncate table usability_tests_appversion;
+truncate table usability_tests_executions_interactionstepexecution;
+truncate table usability_tests_executions_observation;
+truncate table usability_tests_executions_participant;
+truncate table usability_tests_executions_scenarioexecution;
+truncate table usability_tests_executions_taskscenarioexecution;
+truncate table usability_tests_refactoring;
+truncate table usability_tests_scenario;
+truncate table usability_tests_task;
+truncate table usability_tests_usabilitytest;
+
+SET FOREIGN_KEY_CHECKS = 1;
+
