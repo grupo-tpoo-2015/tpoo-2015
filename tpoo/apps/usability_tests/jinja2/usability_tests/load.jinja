@@ -2,21 +2,51 @@
 
 {% block content %}
 
-<div class="col-sm-offset-4 col-sm-4">
+<div class="col-sm-offset-3 col-sm-6">
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Subir archivo .sql</h3>
         </div>
         <div class="panel-body">
             <form method="post" action="{{ url('load') }}" role="form" enctype="multipart/form-data">
+                {{ form.errors }}
                 <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
                 <div class="form-group">
-                    <input id="id_file" name="file" type="file">
+                    <label for="id_name">Descripción:</label>
+                    <input id="id_name" class="form-control" maxlength="64" name="name" type="text">
                 </div>
-                <input type="submit" value="Enviar" class="btn btn-default"/>
+                <div class="form-group">
+                    <input id="id_script_file" name="script_file" type="file">
+                </div>
+                <input type="submit" value="Agregar" class="btn btn-default"/>
             </form>
         </div>
     </div>
 </div>
+
+{% if dumps %}
+<div class="col-sm-offset-3 col-sm-6">
+    <div class="table-responsive">
+        <table class="table table-bordered table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>Descripción</th>
+                    <th>Subida por</th>
+                    <th>Fecha y hora</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for dump in dumps %}
+                <tr>
+                    <td>{{ dump.name }}</td>
+                    <td>{{ dump.uploaded_by }}</td>
+                    <td>{{ dump.timestamp }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endif %}
 
 {% endblock %}

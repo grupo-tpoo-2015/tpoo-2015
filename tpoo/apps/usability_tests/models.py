@@ -2,7 +2,13 @@ from django.db import models
 from django.contrib.auth.models import User
 
 
-# esto en realidad es App
+class SqlDump(models.Model):
+    name = models.CharField(max_length=64, null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    uploaded_by = models.ForeignKey(User)
+    script_file = models.FileField(upload_to='dumps')
+
+
 class UsabilityTest(models.Model):
     owner = models.ForeignKey(User, related_name='usability_tests')
     name = models.CharField(max_length=64)
