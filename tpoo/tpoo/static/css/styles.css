@@ -15,6 +15,6 @@
     opacity: 0.9; }
 
 #page-wrapper {
-  min-height: 92.5vh; }
+  min-height: calc(100vh - 50px); }
 
 /*# sourceMappingURL=styles.css.map */
