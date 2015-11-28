@@ -32,17 +32,17 @@ var barChart = (function () {
         width = 600;
 
 
-        barWidth = ((width + gapBetweenBars) / dataset.items.length) - gapBetweenBars;
+        barWidth = ((width + gapBetweenBars) / dataset.data.length) - gapBetweenBars;
 
 
-        max_value = d3.max(dataset.items, function (obj) {
+        max_value = d3.max(dataset.data, function (obj) {
             return obj.value;
         }) + paddingTop;
 
         colorScale = utils.buildColorScale([0, max_value], ['rgb(10, 75, 60)', 'rgb(255, 75, 60)']);
 
         xScale = d3.scale.linear()
-                   .domain([0, dataset.items.length])
+                   .domain([0, dataset.data.length])
                    .range([0, width + gapBetweenBars]);
 
         yScale = d3.scale.linear()
@@ -55,7 +55,7 @@ var barChart = (function () {
 
 
         g = svg.selectAll('g')
-            .data(dataset.items)
+            .data(dataset.data)
             .enter()
             .append('g')
             .classed('bar', true);

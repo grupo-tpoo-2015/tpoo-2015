@@ -18,11 +18,11 @@ class Chart(object):
     def as_dict(self):
         return {
             'title': self.get_title(),
-            'items': self.get_items_as_dict(),
+            'data': self.get_data_as_dict(),
         }
 
-    def get_items_as_dict(self):
-        return map(self.item_as_dict, self.get_items())
+    def get_data_as_dict(self):
+        return map(self.item_as_dict, self.get_data())
 
     def item_as_dict(self, item):
         return item
@@ -30,7 +30,7 @@ class Chart(object):
     def get_title(self):
         raise NotImplementedError()
 
-    def get_items(self):
+    def get_data(self):
         raise NotImplementedError()
 
 
@@ -93,7 +93,7 @@ class CompareTaskBetweenVersionsChart(StackedBarChart):
             participant = o.step_execution.task_scenario_execution.scenario_execution.participant
             participants_sets[scenario_task.task][scenario_task.scenario.app_version].add(participant)
 
-        self.items = []
+        self.data = []
         self.stack_names = []
         self.legend_items = [v.name for v in versions]
         # TODO: sort key should be order, but id does not exist
@@ -102,7 +102,7 @@ class CompareTaskBetweenVersionsChart(StackedBarChart):
             sets = participants_sets[task]
             self.stack_names.append(task.name)
             if len(counter.keys()) == len(versions):
-                self.items.append({
+                self.data.append({
                     'name': task.name,
                     'values': [counter[app_version] / float(len(sets[app_version]))
                                for app_version in versions],
@@ -114,8 +114,8 @@ class CompareTaskBetweenVersionsChart(StackedBarChart):
     def get_stack_names(self):
         return self.stack_names
 
-    def get_items(self):
-        return self.items
+    def get_data(self):
+        return self.data
 
     def get_legends(self):
         return self.legend_items
@@ -141,7 +141,7 @@ class ParticipantTimesPerTaskBarChart(BarChart):
             'name': scenario_task_execution.scenario_task.task.name,
         }
 
-    def get_items(self):
+    def get_data(self):
         all_objs = TaskScenarioExecution.objects.all()
         return all_objs.filter(scenario_execution__participant=self.participant)
 
@@ -154,8 +154,8 @@ class UsabilityTestTreeChart(BarChart):
     def get_title(self):
         return self.usability_test.name
 
-    def get_items(self):
-        return [self.usability_test_tree(self.usability_test)]
+    def get_data_as_dict(self):
+        return self.usability_test_tree(self.usability_test)
 
     def usability_test_tree(self, usability_test):
         scenarios = Scenario.objects.filter(app_version__usability_test=usability_test)

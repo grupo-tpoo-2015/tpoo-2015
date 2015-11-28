@@ -13,6 +13,8 @@ def home(request):
     for usability_test in UsabilityTest.objects.all():
         datasets.append(CompareTaskBetweenVersionsChart(usability_test).as_dict())
 
+    print UsabilityTestTreeChart(UsabilityTest.objects.first()).as_dict()
+
     return render(request, 'charts/home.jinja', {
         'datasets': datasets,
         'participants': Participant.objects.all(),

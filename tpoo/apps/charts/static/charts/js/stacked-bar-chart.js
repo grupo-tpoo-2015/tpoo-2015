@@ -28,10 +28,10 @@ var stackedBarChart = (function () {
         height = svg.node().getBoundingClientRect().height;
 
 
-        barWidth = ((width + gapBetweenStacks) / dataset.items.length) - gapBetweenStacks;
+        barWidth = ((width + gapBetweenStacks) / dataset.data.length) - gapBetweenStacks;
 
 
-        max_value = d3.max(dataset.items, function (stack) {
+        max_value = d3.max(dataset.data, function (stack) {
             return d3.sum(stack.values);
         }) + paddingTop;
 
@@ -41,7 +41,7 @@ var stackedBarChart = (function () {
             "#92CE82",
         ];
         xScale = d3.scale.linear()
-                   .domain([0, dataset.items.length])
+                   .domain([0, dataset.data.length])
                    .range([0, width + gapBetweenStacks]);
 
         yScale = d3.scale.linear()
@@ -71,7 +71,7 @@ var stackedBarChart = (function () {
             .attr('height', 10);
 
         stacks = svg.selectAll('.stack')
-            .data(dataset.items).enter()
+            .data(dataset.data).enter()
             .append('g')
             .classed('stack', true);
 
@@ -83,7 +83,7 @@ var stackedBarChart = (function () {
         function calculateY(bar, barIndex, stackIndex) {
             var k, accum = 0;
             for (k = 0; k <= barIndex; k += 1) {
-                accum += dataset.items[stackIndex].values[k];
+                accum += dataset.data[stackIndex].values[k];
             }
             return yScale(accum);
         }
@@ -99,7 +99,7 @@ var stackedBarChart = (function () {
                 return colors[barIndex % colors.length];
             })
             .append('title').text(function (bar, barIndex, stackIndex) {
-                return dataset.items[stackIndex].name;
+                return dataset.data[stackIndex].name;
             });
 
         function addTextToBars(marginTop, text) {
