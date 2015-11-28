@@ -167,7 +167,7 @@ var tree = (function ($) {
     }
 
     return {
-        init: function (params) {
+        draw: function (params) {
 
             root = params.data;
             root.x0 = height / 2;

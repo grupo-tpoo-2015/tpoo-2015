@@ -104,13 +104,16 @@
 {% block js_init %}
 <script>
 
-    tree.init({
-        data: {{ jsonify(tree_data['data']) }},
+    tree.draw({
         svgSelector: "#tree",
+        data: {{ jsonify(tree_data['data']) }},
     });
 
     {% for dataset in datasets %}
-    stackedBarChart.draw(d3.select("#chart-{{ loop.index }}"), {{ jsonify(dataset) }});
+    stackedBarChart.draw({
+        svgSelector: "#chart-{{ loop.index }}",
+        dataset: {{ jsonify(dataset) }},
+    });
     {% endfor %}
 
 </script>

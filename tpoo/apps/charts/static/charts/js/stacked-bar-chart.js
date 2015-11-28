@@ -7,12 +7,13 @@ var stackedBarChart = (function () {
 
     'use strict';
 
-    function draw(svg, dataset) {
+    function draw(params) {
 
-        var width,
+        var svg,
+            width,
             height,
             max_value,
-            paddingTop = dataset.legends.length * 35,
+            paddingTop = params.dataset.legends.length * 35,
             gapBetweenStacks = 2,
             stacks,
             bars,
@@ -24,14 +25,15 @@ var stackedBarChart = (function () {
             xScale,
             yScale;
 
+        svg = d3.select(params.svgSelector);
         width = svg.node().getBoundingClientRect().width;
         height = svg.node().getBoundingClientRect().height;
 
 
-        barWidth = ((width + gapBetweenStacks) / dataset.data.length) - gapBetweenStacks;
+        barWidth = ((width + gapBetweenStacks) / params.dataset.data.length) - gapBetweenStacks;
 
 
-        max_value = d3.max(dataset.data, function (stack) {
+        max_value = d3.max(params.dataset.data, function (stack) {
             return d3.sum(stack.values);
         }) + paddingTop;
 
@@ -41,7 +43,7 @@ var stackedBarChart = (function () {
             "#92CE82",
         ];
         xScale = d3.scale.linear()
-                   .domain([0, dataset.data.length])
+                   .domain([0, params.dataset.data.length])
                    .range([0, width + gapBetweenStacks]);
 
         yScale = d3.scale.linear()
@@ -55,23 +57,23 @@ var stackedBarChart = (function () {
         /*jslint unparam: true */
         legend = svg.append('g').classed('legend', true);
 
-        legendItems = legend.selectAll('.legend-item').data(dataset.legends).enter()
+        legendItems = legend.selectAll('.legend-item').data(params.dataset.legends).enter()
             .append('g')
             .classed('legend-item', true);
 
         legendItems.append('text').text(utils.identityFunction)
-            .attr('y', function (text, i) {return 15 + 20 * (dataset.legends.length - i); })
+            .attr('y', function (text, i) {return 15 + 20 * (params.dataset.legends.length - i); })
             .attr('x', width - 170);
 
         legendItems.append('rect').text(utils.identityFunction)
-            .attr('y', function (text, i) {return 15 + 20 * (dataset.legends.length - i) - 10; })
+            .attr('y', function (text, i) {return 15 + 20 * (params.dataset.legends.length - i) - 10; })
             .attr('x', width - 170 - 15)
             .attr('fill', function (text, i) {return colors[i % colors.length]; })
             .attr('width', 10)
             .attr('height', 10);
 
         stacks = svg.selectAll('.stack')
-            .data(dataset.data).enter()
+            .data(params.dataset.data).enter()
             .append('g')
             .classed('stack', true);
 
@@ -83,7 +85,7 @@ var stackedBarChart = (function () {
         function calculateY(bar, barIndex, stackIndex) {
             var k, accum = 0;
             for (k = 0; k <= barIndex; k += 1) {
-                accum += dataset.data[stackIndex].values[k];
+                accum += params.dataset.data[stackIndex].values[k];
             }
             return yScale(accum);
         }
@@ -99,7 +101,7 @@ var stackedBarChart = (function () {
                 return colors[barIndex % colors.length];
             })
             .append('title').text(function (bar, barIndex, stackIndex) {
-                return dataset.data[stackIndex].name;
+                return params.dataset.data[stackIndex].name;
             });
 
         function addTextToBars(marginTop, text) {
