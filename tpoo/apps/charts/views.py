@@ -3,7 +3,7 @@ from django.contrib.auth.decorators import login_required
 
 from usability_tests.models import UsabilityTest
 from usability_tests_executions.models import Participant
-from .charts import ParticipantTimesPerTaskBarChart, CompareTaskBetweenVersionsChart
+from .charts import ParticipantTimesPerTaskBarChart, CompareTaskBetweenVersionsChart, UsabilityTestTreeChart
 
 
 @login_required
@@ -18,6 +18,7 @@ def home(request):
         'participants': Participant.objects.all(),
         'usability_tests': UsabilityTest.objects.all(),
         'charts_active': True,
+        'tree_data': UsabilityTestTreeChart(UsabilityTest.objects.first()).as_dict(),
     })
 
 

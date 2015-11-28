@@ -1,7 +1,9 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
+from django.db.models import Count, Avg, Sum, Min, Max
 from collections import defaultdict, Counter
+from usability_tests.models import Scenario
 from usability_tests_executions.models import TaskScenarioExecution, Observation
 from tasks.models import ObservationType
 
@@ -55,6 +57,7 @@ class CompareTaskBetweenVersionsChart(StackedBarChart):
 
     @classmethod
     def get(cls, usability_test):
+
         if usability_test.id not in cls.cache:
             cls.cache[usability_test.id] = cls(usability_test)
         return cls.cache[usability_test.id]
@@ -128,3 +131,80 @@ class ParticipantTimesPerTaskBarChart(BarChart):
     def get_items(self):
         all_objs = TaskScenarioExecution.objects.all()
         return all_objs.filter(scenario_execution__participant=self.participant)
+
+
+class UsabilityTestTreeChart(BarChart):
+
+    def __init__(self, usability_test):
+        self.usability_test = usability_test
+
+    def get_title(self):
+        return self.usability_test.name
+
+    def get_items(self):
+        return [self.usability_test_tree(self.usability_test)]
+
+    def usability_test_tree(self, usability_test):
+        scenarios = Scenario.objects.filter(app_version__usability_test=usability_test)
+        return {
+            'name': usability_test.name,
+            'children': map(self.scenario_tree, scenarios)
+        }
+
+    def scenario_tree(self, scenario):
+        scenario_tasks = scenario.tasks.all()
+        return {
+            'name': scenario.name,
+            'children': map(self.scenario_task_tree, scenario_tasks)
+        }
+
+    def scenario_task_tree(self, scenario_task):
+        refactorings = scenario_task.refactorings.all()
+        steps = scenario_task.steps.all()
+        return {
+            'name': scenario_task.task.name,
+            '_children': [
+                {
+                    'name': 'Steps',
+                    '_children': map(self.step_tree, steps),
+                },
+                {
+                    'name': 'Refactorings',
+                    '_children': map(self.refactoring_tree, refactorings),
+                },
+            ]
+        }
+
+    def refactoring_tree(self, refactoring):
+        return {
+            'name': refactoring.name,
+        }
+
+    def step_tree(self, step):
+        observations = Observation.objects.filter(step_execution__interaction_step=step)
+        min_value = observations.aggregate(min=Min('value'))['min']
+        max_value = observations.aggregate(max=Max('value'))['max']
+        count = observations.count()
+        sum_value = observations.aggregate(sum=Sum('value'))['sum']
+        avg_value = observations.aggregate(avg=Avg('value'))['avg']
+
+        return {
+            'name': step.name,
+            '_children': [
+                {
+                    'name': "Min: %.2f" % min_value,
+                },
+                {
+                    'name': "Max: %.2f" % max_value,
+                },
+                {
+                    'name': "Count: %d" % count,
+                },
+                {
+                    'name': "Sum: %.2f" % sum_value,
+                },
+                {
+                    'name': "Avg: %.2f" % avg_value,
+                },
+            ],
+        }
