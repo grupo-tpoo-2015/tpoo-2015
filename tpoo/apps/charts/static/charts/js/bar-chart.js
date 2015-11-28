@@ -29,7 +29,6 @@ var barChart = (function () {
 
         width = svg.node().getBoundingClientRect().width;
         height = svg.node().getBoundingClientRect().height;
-        width = 600;
 
 
         barWidth = ((width + gapBetweenBars) / dataset.data.length) - gapBetweenBars;

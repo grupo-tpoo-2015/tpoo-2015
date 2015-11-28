@@ -1,17 +1,18 @@
 .chart-container .panel-body {
   height: 400px;
   padding: 0; }
-.chart-container .chart {
+
+.chart {
   background: white;
   width: 100%;
   height: 100%; }
-  .chart-container .chart text {
+  .chart text {
     font-family: sans-serif; }
-  .chart-container .chart .bar text {
+  .chart .bar text {
     text-anchor: middle;
     fill: white;
     font-size: 13px; }
-  .chart-container .chart .bar:hover {
+  .chart .bar:hover {
     opacity: 0.9; }
 
 #page-wrapper {
