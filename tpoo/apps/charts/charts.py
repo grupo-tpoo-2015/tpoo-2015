@@ -1,11 +1,13 @@
 # -*- coding: utf-8 -*-
 from __future__ import unicode_literals
 
-from django.db.models import Count, Avg, Sum, Min, Max
+import json
+from django.db.models import Avg, Sum, Min, Max
 from collections import defaultdict, Counter
 from usability_tests.models import Scenario
 from usability_tests_executions.models import TaskScenarioExecution, Observation
 from tasks.models import ObservationType
+from .models import ChartCachedData
 
 
 time_type = ObservationType.objects.get(name='time')
@@ -53,24 +55,35 @@ class StackedBarChart(Chart):
 
 class CompareTaskBetweenVersionsChart(StackedBarChart):
 
-    cache = {}
+    type_id = 1
 
-    @classmethod
-    def get(cls, usability_test):
-
-        if usability_test.id not in cls.cache:
-            cls.cache[usability_test.id] = cls(usability_test)
-        return cls.cache[usability_test.id]
+    def as_dict(self):
+        try:
+            cached = ChartCachedData.objects.get(
+                type=self.type_id,
+                usability_test=self.usability_test,
+            )
+            return json.loads(cached.data)
+        except ChartCachedData.DoesNotExist:
+            self._calculate()
+            data = super(CompareTaskBetweenVersionsChart, self).as_dict()
+            ChartCachedData.objects.create(
+                type=self.type_id,
+                usability_test=self.usability_test,
+                data=json.dumps(data),
+            )
+            return data
 
     def __init__(self, usability_test):
         self.usability_test = usability_test
 
+    def _calculate(self):
         obs = Observation.objects.filter(
-            step_execution__interaction_step__scenario_task__task__usability_test=usability_test,
+            step_execution__interaction_step__scenario_task__task__usability_test=self.usability_test,
             observation_type=time_type,
         )
 
-        versions = list(usability_test.versions.order_by('id'))
+        versions = list(self.usability_test.versions.order_by('id'))
 
         total_times = defaultdict(lambda: Counter())
         participants_sets = defaultdict(lambda: defaultdict(lambda: set()))

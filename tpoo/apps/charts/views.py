@@ -11,7 +11,7 @@ def home(request):
 
     datasets = []
     for usability_test in UsabilityTest.objects.all():
-        datasets.append(CompareTaskBetweenVersionsChart.get(usability_test).as_dict())
+        datasets.append(CompareTaskBetweenVersionsChart(usability_test).as_dict())
 
     return render(request, 'charts/home.jinja', {
         'datasets': datasets,
