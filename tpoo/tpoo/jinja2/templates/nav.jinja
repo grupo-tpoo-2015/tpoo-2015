@@ -8,7 +8,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="{{ url('home') }}">TPOO</a>
+        <a class="navbar-brand" href="{{ url('load') }}">TPOO</a>
     </div>
     <!-- Top Menu Items -->
     <ul class="nav navbar-right top-nav">
@@ -23,12 +23,54 @@
             </ul>
         </li>
     </ul>
+
+    {% macro build_chart_nav_items_list(usability_test) %}
+
+    <li {% if current_usability_test == usability_test and tree_chart_is_active %}class="active"{% endif %}>
+        <a href="{{ url('tree_chart', usability_test.id) }}">
+            <i class="fa fa-fw fa-share-alt"></i>
+            Árbol
+        </a>
+    </li>
+    <li {% if current_usability_test == usability_test and stacked_bar_chart_is_active %}class="active"{% endif %}>
+        <a href="{{ url('stacked_bar_chart', usability_test.id) }}">
+            <i class="fa fa-fw fa-bar-chart-o"></i>
+            Comparar versiones
+        </a>
+    </li>
+    <li {% if current_usability_test == usability_test and bar_charts_is_active %}class="active"{% endif %}>
+        <a href="{{ url('bar_charts', usability_test.id) }}">
+            <i class="fa fa-fw fa-bar-chart-o"></i>
+            Tareas por usuario
+        </a>
+    </li>
+
+    {% endmacro %}
+
     <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
     <div class="collapse navbar-collapse navbar-ex1-collapse">
         <ul class="nav navbar-nav side-nav">
-            <li {% if charts_active %}class="active"{% endif %}>
-                <a href="{{ url('home') }}"><i class="fa fa-fw fa-bar-chart-o"></i> Gráficos</a>
-            </li>
+            {% if usability_tests.count() == 1 %}
+                {{ build_chart_nav_items_list(usability_tests.first()) }}
+            {% else %}
+                {% for usability_test in usability_tests %}
+                <li>
+                    <a href="javascript:;"
+                       data-toggle="collapse"
+                       data-target="#charts-list-{{ loop.index }}"
+                       aria-expanded="{{ jsonify(usability_test == current_usability_test) }}">
+                        <i class="fa fa-fw fa-file-text-o"></i>
+                        {{ usability_test.name }}
+                        <i class="fa fa-fw fa-caret-down"></i>
+                    </a>
+                    <ul id="charts-list-{{ loop.index }}"
+                        class="charts-list nav navbar-nav collapse {% if usability_test == current_usability_test %}in{% endif %}"
+                        aria-expanded="{{ jsonify(usability_test == current_usability_test) }}">
+                        {{ build_chart_nav_items_list(usability_test) }}
+                    </ul>
+                </li>
+                {% endfor %}
+            {% endif %}
             <li {% if load_data_active %}class="active"{% endif %}>
                 <a href="{{ url('load') }}"><i class="fa fa-fw fa-plus"></i> Agregar nuevos datos</a>
             </li>

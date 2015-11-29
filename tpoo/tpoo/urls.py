@@ -20,7 +20,6 @@ from django.conf.urls.static import static
 urlpatterns = [
     url(r'^', include('users.urls')),
     url(r'^', include('charts.urls')),
-    url(r'^$', 'charts.views.home', name='home'),
     url(r'^load/$', 'usability_tests.views.load', name='load'),
 ]
 

@@ -14,7 +14,7 @@ def register(request):
                 password=form['password1'].value(),
             )
             perform_login(request, new_user)
-            return redirect('home')
+            return redirect('load')
     return render(request, 'users/register.jinja', {
         'form': form,
     })

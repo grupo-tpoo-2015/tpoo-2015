@@ -1,0 +1,20 @@
+{% extends "base.jinja" %}
+
+{% block bar_chart_active %}class="active"{% endblock %}
+
+
+{% block content %}
+
+<h3>Gráficos de barras por participante</h3>
+<p>
+    Para cada participante se muestran los tiempos que le llevó cada tarea.
+</p>
+<ul>
+{% for participant in participants %}
+    <li>
+        <a href="{{ url('bar_chart', current_usability_test.id, participant.id) }}">{{ participant.name }}</a>
+    </li>
+{% endfor %}
+</ul>
+
+{% endblock %}

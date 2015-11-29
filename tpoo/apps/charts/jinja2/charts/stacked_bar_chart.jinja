@@ -2,18 +2,22 @@
 
 {% block content %}
 
-{% for dataset in datasets %}
+<h3>Gráficos de barras apiladas por test de usabilidad</h3>
+<p>
+    Para cada tests de usabilidad se muestran los tiempos totales de cada tarea, comparados
+    entre las distintas versiones.
+</p>
 <div class="col-md-6">
     <div class="panel panel-default chart-container">
         <div class="panel-heading">
             <h3 class="panel-title">{{ dataset['title'] }}</h3>
         </div>
         <div class="panel-body">
-            <svg id="chart-{{ loop.index }}" class="chart"></svg>
+            <svg id="chart" class="chart"></svg>
         </div>
     </div>
 </div>
-{% endfor %}
+
 
 {% endblock %}
 
@@ -24,10 +28,10 @@
 {% block js_init %}
 <script>
 
-
-    {% for dataset in datasets %}
-    stackedBarChart.draw(d3.select("#chart-{{ loop.index }}"), {{ jsonify(dataset) }});
-    {% endfor %}
+    stackedBarChart.draw({
+        svgSelector: "#chart",
+        dataset: {{ jsonify(dataset) }},
+    });
 
 </script>
 {% endblock %}

@@ -141,6 +141,6 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 LOGIN_URL = '/login/'
-LOGIN_REDIRECT_URL = '/'
+LOGIN_REDIRECT_URL = '/load'
 
 MEDIA_ROOT = os.path.join(PROJECT_DIR, 'media')
