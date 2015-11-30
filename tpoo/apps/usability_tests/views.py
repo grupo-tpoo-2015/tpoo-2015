@@ -1,5 +1,7 @@
 from django import forms
 from django.shortcuts import render
+from django.contrib.auth.decorators import login_required
+
 from .models import SqlDump
 
 
@@ -14,6 +16,7 @@ class SqlDumpForm(forms.ModelForm):
         super(SqlDumpForm, self).save(*args, **kwargs)
 
 
+@login_required
 def load(request):
 
     if request.method == 'POST':
