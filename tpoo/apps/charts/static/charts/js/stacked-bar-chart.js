@@ -63,11 +63,11 @@ var stackedBarChart = (function () {
 
         legendItems.append('text').text(utils.identityFunction)
             .attr('y', function (text, i) {return 15 + 20 * (params.dataset.legends.length - i); })
-            .attr('x', width - 170);
+            .attr('x', 35);
 
         legendItems.append('rect').text(utils.identityFunction)
             .attr('y', function (text, i) {return 15 + 20 * (params.dataset.legends.length - i) - 10; })
-            .attr('x', width - 170 - 15)
+            .attr('x', 20)
             .attr('fill', function (text, i) {return colors[i % colors.length]; })
             .attr('width', 10)
             .attr('height', 10);
