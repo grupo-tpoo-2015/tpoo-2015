@@ -174,8 +174,13 @@ class UsabilityTestTreeChart(BarChart):
     def scenario_task_tree(self, scenario_task):
         refactorings = scenario_task.refactorings.all()
         steps = scenario_task.steps.all()
+        name = scenario_task.task.name
+        if name.upper().startswith(self.usability_test.name.upper()):
+            name = name[len(self.usability_test.name) + 1:]
+            if name.upper().startswith("Test ".upper()):
+                name = name[len("Test "):]
         return {
-            'name': scenario_task.task.name,
+            'name': name,
             '_children': [
                 {
                     'name': 'Steps',
