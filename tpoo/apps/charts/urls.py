@@ -1,21 +1,27 @@
 from django.conf.urls import url
+from .views import (
+    TreeChartView,
+    StackedBarChartView,
+    BarChartsView,
+    BarChartView,
+)
 
 urlpatterns = [
 
     url(r'^(?P<usability_test_id>\d+)/tree/$',
-        'charts.views.tree_chart',
+        TreeChartView.as_view(),
         name='tree_chart'),
 
     url(r'^(?P<usability_test_id>\d+)/stacked-bar-chart/$',
-        'charts.views.stacked_bar_chart',
+        StackedBarChartView.as_view(),
         name='stacked_bar_chart'),
 
     url(r'^(?P<usability_test_id>\d+)/bar-charts/$',
-        'charts.views.bar_charts',
+        BarChartsView.as_view(),
         name='bar_charts'),
 
     url(r'^(?P<usability_test_id>\d+)/bar-charts/(?P<participant_id>\d+)$',
-        'charts.views.bar_chart',
+        BarChartView.as_view(),
         name='bar_chart'),
 
 ]

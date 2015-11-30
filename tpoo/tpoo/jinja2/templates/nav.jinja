@@ -1,3 +1,48 @@
+{% macro build_chart_nav_items_list(ut, is_active) %}
+
+    <li {% if is_active and tree_chart_is_active %}class="active"{% endif %}>
+        <a href="{{ url('tree_chart', ut.id) }}">
+            <i class="fa fa-fw fa-share-alt"></i>
+            Árbol
+        </a>
+    </li>
+
+    <li {% if is_active and stacked_bar_chart_is_active %}class="active"{% endif %}>
+        <a href="{{ url('stacked_bar_chart', ut.id) }}">
+            <i class="fa fa-fw fa-bar-chart-o"></i>
+            Comparar versiones
+        </a>
+    </li>
+
+    <li {% if is_active and bar_charts_is_active %}class="active"{% endif %}>
+        <a href="{{ url('bar_charts', ut.id) }}">
+            <i class="fa fa-fw fa-bar-chart-o"></i>
+            Tareas por usuario
+        </a>
+    </li>
+
+{% endmacro %}
+
+{% macro build_usability_test_links(ut, is_active, num) %}
+
+    <a href="javascript:;"
+       data-toggle="collapse"
+       data-target="#charts-list-{{ num }}"
+       aria-expanded="{{ jsonify(is_active) }}">
+        <i class="fa fa-fw fa-file-text-o"></i>
+        {{ ut.name }}
+        <i class="fa fa-fw fa-caret-down"></i>
+    </a>
+
+    <ul id="charts-list-{{ num }}"
+        class="charts-list nav navbar-nav collapse{% if is_active %} in{% endif %}"
+        aria-expanded="{{ jsonify(is_active) }}">
+        {{ build_chart_nav_items_list(ut, is_active) }}
+    </ul>
+
+{% endmacro %}
+
+
 <!-- Navigation -->
 <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
     <!-- Brand and toggle get grouped for better mobile display -->
@@ -24,55 +69,23 @@
         </li>
     </ul>
 
-    {% macro build_chart_nav_items_list(usability_test) %}
-
-    <li {% if current_usability_test == usability_test and tree_chart_is_active %}class="active"{% endif %}>
-        <a href="{{ url('tree_chart', usability_test.id) }}">
-            <i class="fa fa-fw fa-share-alt"></i>
-            Árbol
-        </a>
-    </li>
-    <li {% if current_usability_test == usability_test and stacked_bar_chart_is_active %}class="active"{% endif %}>
-        <a href="{{ url('stacked_bar_chart', usability_test.id) }}">
-            <i class="fa fa-fw fa-bar-chart-o"></i>
-            Comparar versiones
-        </a>
-    </li>
-    <li {% if current_usability_test == usability_test and bar_charts_is_active %}class="active"{% endif %}>
-        <a href="{{ url('bar_charts', usability_test.id) }}">
-            <i class="fa fa-fw fa-bar-chart-o"></i>
-            Tareas por usuario
-        </a>
-    </li>
-
-    {% endmacro %}
-
     <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
     <div class="collapse navbar-collapse navbar-ex1-collapse">
         <ul class="nav navbar-nav side-nav">
             {% if usability_tests.count() == 1 %}
-                {{ build_chart_nav_items_list(usability_tests.first()) }}
+                {{ build_chart_nav_items_list(usability_tests.first(), true) }}
             {% else %}
-                {% for usability_test in usability_tests %}
+                {% for ut in usability_tests %}
                 <li>
-                    <a href="javascript:;"
-                       data-toggle="collapse"
-                       data-target="#charts-list-{{ loop.index }}"
-                       aria-expanded="{{ jsonify(usability_test == current_usability_test) }}">
-                        <i class="fa fa-fw fa-file-text-o"></i>
-                        {{ usability_test.name }}
-                        <i class="fa fa-fw fa-caret-down"></i>
-                    </a>
-                    <ul id="charts-list-{{ loop.index }}"
-                        class="charts-list nav navbar-nav collapse {% if usability_test == current_usability_test %}in{% endif %}"
-                        aria-expanded="{{ jsonify(usability_test == current_usability_test) }}">
-                        {{ build_chart_nav_items_list(usability_test) }}
-                    </ul>
+                    {{ build_usability_test_links(ut, ut == current_usability_test, loop.index) }}
                 </li>
                 {% endfor %}
             {% endif %}
             <li {% if load_data_active %}class="active"{% endif %}>
-                <a href="{{ url('load') }}"><i class="fa fa-fw fa-plus"></i> Agregar nuevos datos</a>
+                <a href="{{ url('load') }}">
+                    <i class="fa fa-fw fa-plus"></i>
+                    Agregar nuevos datos
+                </a>
             </li>
         </ul>
     </div>
