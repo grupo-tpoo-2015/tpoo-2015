@@ -34,8 +34,8 @@ class UsabilityTestView(View, LoginRequiredMixin):
 
 class TreeChartView(UsabilityTestView):
 
-    # template_name = 'charts/horizontal_tree.jinja'
-    template_name = 'charts/vertical_tree.jinja'
+    template_name = 'charts/horizontal_tree.jinja'
+    # template_name = 'charts/vertical_tree.jinja'
 
     def build_context(self, request, usability_test):
         return {

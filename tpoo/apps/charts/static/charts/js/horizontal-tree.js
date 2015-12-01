@@ -11,14 +11,15 @@ var tree = (function ($) {
     'use strict';
 
     var margin = {
+            left: 50,
             top: 20,
-            right: 120,
+            right: 100,
             bottom: 20,
-            left: 100
         },
-        outerWidth = 950,
+
+        outerWidth,
         outerHeight = 800,
-        width = outerWidth - margin.right - margin.left,
+        width,
         height = outerHeight - margin.top - margin.bottom,
 
         i = 0,
@@ -107,6 +108,9 @@ var tree = (function ($) {
 
                     $('#vid-container').append(embed);
                 }
+            })
+            .append('title').text(function (d) {
+                return d.full_name || d.name;
             });
 
         // Transition nodes to their new position.
@@ -174,10 +178,12 @@ var tree = (function ($) {
             root.y0 = 0;
 
             svg = d3.select(params.svgSelector)
-                .attr("width", outerWidth)
                 .attr("height", outerHeight)
                 .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+            outerWidth = svg.node().getBoundingClientRect().width;
+            width = outerWidth - margin.right - margin.left;
 
             update(root);
             d3.select(window.frameElement).style("height", outerHeight + "px");

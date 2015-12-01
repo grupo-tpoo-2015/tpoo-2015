@@ -9,9 +9,16 @@ var tree = (function () {
     'use strict';
 
     var svg, root,
-        margin = { top: 40, right: 120, bottom: 20, left: 120 },
-        width = 960 - margin.right - margin.left,
-        height = 900 - margin.top - margin.bottom,
+        outerWidth = 960,
+        outerHeight = 900,
+        margin = {
+            top: 40,
+            right: 120,
+            bottom: 20,
+            left: 120,
+        },
+        width = outerWidth - margin.right - margin.left,
+        height = outerHeight - margin.top - margin.bottom,
 
         i = 0,
         duration = 750,
@@ -135,8 +142,8 @@ var tree = (function () {
         draw: function (params) {
 
             svg = d3.select(params.svgSelector).append("svg")
-                .attr("width", width + margin.right + margin.left)
-                .attr("height", height + margin.top + margin.bottom)
+                .attr("width", outerWidth)
+                .attr("height", outerHeight)
                 .append("g")
                 .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
