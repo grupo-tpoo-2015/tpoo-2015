@@ -1,16 +1,9 @@
 from django.shortcuts import render, get_object_or_404, redirect
-from django.contrib.auth.decorators import login_required
 from django.views.generic import View
 
 from .forms import SqlDumpForm
 from .models import SqlDump
-
-
-class LoginRequiredMixin(object):
-    @classmethod
-    def as_view(cls, **initkwargs):
-        view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
-        return login_required(view)
+from tpoo.utils.views import LoginRequiredMixin
 
 
 class LoadView(View, LoginRequiredMixin):

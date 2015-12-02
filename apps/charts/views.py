@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
-from django.contrib.auth.decorators import login_required
 from django.views.generic import View
 
+from tpoo.utils.views import LoginRequiredMixin
 from usability_tests.models import UsabilityTest
 from usability_tests_executions.models import Participant
 from .charts import (
@@ -9,13 +9,6 @@ from .charts import (
     CompareTaskBetweenVersionsChart,
     UsabilityTestTreeChart,
 )
-
-
-class LoginRequiredMixin(object):
-    @classmethod
-    def as_view(cls, **initkwargs):
-        view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
-        return login_required(view)
 
 
 class UsabilityTestView(View, LoginRequiredMixin):
