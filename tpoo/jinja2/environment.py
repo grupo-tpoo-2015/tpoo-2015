@@ -10,9 +10,10 @@ def cool_reverse(name, *args):
 
 
 def enumeration(things):
+
     parts = [unicode(thing) for thing in things]
     first_parts, last_part = parts[:-1], parts[-1]
-    return " y ".join([', '.join(first_parts), last_part])
+    return " y ".join(x for x in [', '.join(first_parts), last_part] if x)
 
 
 def environment(**options):
