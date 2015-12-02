@@ -213,6 +213,17 @@ class UsabilityTestTreeChart(BarChart):
 
     def step_tree(self, step):
         observations = Observation.objects.filter(step_execution__interaction_step=step)
+
+        if not observations.exists():
+            return {
+                'name': step.name,
+                '_children': [
+                    {
+                        'name': 'No data',
+                    },
+                ],
+            }
+
         min_value = observations.aggregate(min=Min('value'))['min']
         max_value = observations.aggregate(max=Max('value'))['max']
         count = observations.count()
