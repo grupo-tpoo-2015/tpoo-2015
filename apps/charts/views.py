@@ -70,3 +70,6 @@ class BarChartView(UsabilityTestView):
             'dataset': ParticipantTimesPerTaskBarChart(participant).as_dict(),
             'bar_charts_is_active': True,
         }
+
+    def get(self, request, usability_test_id, participant_id):
+        return super(BarChartView, self).get(request, usability_test_id, participant_id)
