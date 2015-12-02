@@ -1,18 +1,12 @@
 from django.db import models
+from django.conf import settings
 from django.contrib.auth.models import User
-
-
-class SqlDump(models.Model):
-    name = models.CharField(max_length=64, null=True, blank=True)
-    timestamp = models.DateTimeField(auto_now_add=True)
-    uploaded_by = models.ForeignKey(User)
-    script_file = models.FileField(upload_to='dumps')
+from subprocess import call
 
 
 class UsabilityTest(models.Model):
     owner = models.ForeignKey(User, related_name='usability_tests')
     name = models.CharField(max_length=64)
-    legacy_id = models.PositiveSmallIntegerField(default=0)
 
     def __unicode__(self):
         return self.name
@@ -48,3 +42,20 @@ class Scenario(models.Model):
     def __unicode__(self):
         return self.name
 
+
+class SqlDump(models.Model):
+    name = models.CharField(max_length=64, null=True, blank=True)
+    timestamp = models.DateTimeField(auto_now_add=True)
+    uploaded_by = models.ForeignKey(User)
+    script_file = models.FileField(upload_to='dumps')
+    is_the_current_one = models.BooleanField(default=False)
+
+    def choose(self):
+        from charts.charts import CompareTaskBetweenVersionsChart
+        call(["/bin/bash", settings.BASE_DIR + "/load.sh", self.script_file.path])
+        SqlDump.objects.update(is_the_current_one=False)
+        self.is_the_current_one = True
+        self.save()
+        # this forces data for these charts to be cached
+        for ut in UsabilityTest.objects.all():
+            CompareTaskBetweenVersionsChart(ut).as_dict()

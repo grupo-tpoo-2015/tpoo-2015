@@ -16,11 +16,14 @@ Including another URLconf
 from django.conf import settings
 from django.conf.urls import include, url
 from django.conf.urls.static import static
+from usability_tests.views import LoadView, DeleteDumpView, ChooseDumpView
 
 urlpatterns = [
     url(r'^', include('users.urls')),
     url(r'^', include('charts.urls')),
-    url(r'^load/$', 'usability_tests.views.load', name='load'),
+    url(r'^$', LoadView.as_view(), name='load'),
+    url(r'^delete-dump/(?P<dump_id>\d+)$', DeleteDumpView.as_view(), name='delete_dump'),
+    url(r'^choose-dump/(?P<dump_id>\d+)$', ChooseDumpView.as_view(), name='choose_dump'),
 ]
 
 if settings.DEBUG:

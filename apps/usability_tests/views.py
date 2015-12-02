@@ -1,33 +1,55 @@
-from django import forms
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
+from django.views.generic import View
 
+from .forms import SqlDumpForm
 from .models import SqlDump
 
 
-class SqlDumpForm(forms.ModelForm):
-
-    class Meta:
-        model = SqlDump
-        fields = ('name', 'script_file')
-
-    def save(self, user, *args, **kwargs):
-        self.instance.uploaded_by = user
-        super(SqlDumpForm, self).save(*args, **kwargs)
+class LoginRequiredMixin(object):
+    @classmethod
+    def as_view(cls, **initkwargs):
+        view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
+        return login_required(view)
 
 
-@login_required
-def load(request):
+class LoadView(View, LoginRequiredMixin):
 
-    if request.method == 'POST':
+    template_name = 'usability_tests/load.jinja'
+
+    def _render(self, request, form):
+        return render(request, self.template_name, {
+            'load_data_active': True,
+            'form': form,
+            'dumps': SqlDump.objects.all(),
+        })
+
+    def get(self, request):
+        form = SqlDumpForm()
+        return self._render(request, form)
+
+    def post(self, request):
         form = SqlDumpForm(request.POST, request.FILES)
         if form.is_valid():
-            form.save(request.user)
-    else:
-        form = SqlDumpForm()
+            dump = form.save(request.user)
+            if SqlDump.objects.count() == 1:
+                dump.choose()
+        return self._render(request, form)
 
-    return render(request, 'usability_tests/load.jinja', {
-        'load_data_active': True,
-        'form': form,
-        'dumps': SqlDump.objects.all(),
-    })
+
+class DeleteDumpView(View, LoginRequiredMixin):
+
+    def post(self, request, dump_id):
+        dump = get_object_or_404(SqlDump, id=dump_id)
+        dump.delete()
+        return redirect('load')
+
+
+class ChooseDumpView(View, LoginRequiredMixin):
+
+    def post(self, request, dump_id):
+        dump = get_object_or_404(SqlDump, id=dump_id)
+        if dump.is_the_current_one:
+            raise Exception("El dump no puede ser borrado porque es el actual")
+        dump.choose()
+        return redirect('load')

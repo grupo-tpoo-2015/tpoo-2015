@@ -2,7 +2,7 @@
 
 {% block content %}
 
-<div class="col-sm-offset-3 col-sm-6">
+<div class="col-sm-offset-2 col-sm-8">
     <div class="panel panel-default">
         <div class="panel-heading">
             <h3 class="panel-title">Subir archivo .sql</h3>
@@ -25,7 +25,7 @@
 </div>
 
 {% if dumps %}
-<div class="col-sm-offset-3 col-sm-6">
+<div class="col-sm-offset-2 col-sm-8">
     <div class="table-responsive">
         <table class="table table-bordered table-hover table-striped">
             <thead>
@@ -33,6 +33,7 @@
                     <th>Descripción</th>
                     <th>Subida por</th>
                     <th>Fecha y hora</th>
+                    <th>Acciones</th>
                 </tr>
             </thead>
             <tbody>
@@ -41,6 +42,22 @@
                     <td>{{ dump.name }}</td>
                     <td>{{ dump.uploaded_by }}</td>
                     <td>{{ dump.timestamp }}</td>
+                    <td>
+                        {% if dump.is_the_current_one %}
+                        Es el conjunto de datos actual
+                        {% else %}
+                        <form action="{{ url('choose_dump', dump.id) }}" method="POST">
+                            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                            <input type="submit" value="Establecer" class="btn btn-default"/>
+                        </form>
+                        <form action="{{ url('delete_dump', dump.id) }}" method="POST">
+                            <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+                            <button type="submit" class="btn btn-default">
+                                <i class="fa fa-fw fa-trash"></i>
+                            </button>
+                        </form>
+                        {% endif %}
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

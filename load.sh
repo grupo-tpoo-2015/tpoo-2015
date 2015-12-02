@@ -1,3 +1,6 @@
+# The name of the dump file is received as a parameter
+legacy_db_dump_filename=$1
+
 # Calls to dbshell command are too verbose, lets rename them before start
 legacy_db='python manage.py dbshell --database=legacy'
 db='python manage.py dbshell'
@@ -8,9 +11,9 @@ echo 'show tables' | $legacy_db | tail --lines +2 | while read table;
 do echo "truncate table $table" | $legacy_db;  done
 echo -e "\e[32mOK\e[39m"
 
-# Legacy database (tpoodump) gets filled with data from the dump file Sergio sent us
+# Legacy database (tpoodump) gets filled with data from the dump file
 echo -n "Filling legacy database with data... "
-$legacy_db < legacy.sql
+$legacy_db < $legacy_db_dump_filename
 echo -e "\e[32mOK\e[39m"
 
 
@@ -26,7 +29,6 @@ tpoo_tables=$( \
 for table in $tpoo_tables; do
     echo "SET FOREIGN_KEY_CHECKS = 0; truncate table $table;" | $db;
 done;
-# Foreign key checks enabled again
 echo -e "\e[32mOK\e[39m"
 
 # Our migration script is run, filling the default database (tpoo)

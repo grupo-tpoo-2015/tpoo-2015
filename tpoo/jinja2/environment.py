@@ -9,12 +9,19 @@ def cool_reverse(name, *args):
     return reverse(name, args=args)
 
 
+def enumeration(things):
+    parts = [unicode(thing) for thing in things]
+    first_parts, last_part = parts[:-1], parts[-1]
+    return " y ".join([', '.join(first_parts), last_part])
+
+
 def environment(**options):
     env = Environment(**options)
     env.globals.update({
         'static': staticfiles_storage.url,
         'url': cool_reverse,
         'jsonify': jsonify,
-        'usability_tests': UsabilityTest.objects.all(),
+        'usability_tests': UsabilityTest.objects.all,
+        'enumeration': enumeration,
     })
     return env

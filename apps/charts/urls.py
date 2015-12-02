@@ -20,7 +20,7 @@ urlpatterns = [
         BarChartsView.as_view(),
         name='bar_charts'),
 
-    url(r'^(?P<usability_test_id>\d+)/bar-charts/(?P<participant_id>\d+)$',
+    url(r'^(?P<usability_test_id>\d+)/bar-chart/(?P<participant_id>\d+)$',
         BarChartView.as_view(),
         name='bar_chart'),
 

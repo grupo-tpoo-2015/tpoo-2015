@@ -21,4 +21,7 @@
 .charts-list > li {
   width: 100%; }
 
+.table td form {
+  display: inline-block; }
+
 /*# sourceMappingURL=styles.css.map */

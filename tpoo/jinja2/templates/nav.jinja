@@ -53,7 +53,7 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="{{ url('load') }}">TPOO</a>
+        <a class="navbar-brand" href="{{ url('load') }}">{{ enumeration(usability_tests()) }}</a>
     </div>
     <!-- Top Menu Items -->
     <ul class="nav navbar-right top-nav">
@@ -72,10 +72,10 @@
     <!-- Sidebar Menu Items - These collapse to the responsive navigation menu on small screens -->
     <div class="collapse navbar-collapse navbar-ex1-collapse">
         <ul class="nav navbar-nav side-nav">
-            {% if usability_tests.count() == 1 %}
-                {{ build_chart_nav_items_list(usability_tests.first(), true) }}
+            {% if usability_tests().count() == 1 %}
+                {{ build_chart_nav_items_list(usability_tests().first(), true) }}
             {% else %}
-                {% for ut in usability_tests %}
+                {% for ut in usability_tests() %}
                 <li>
                     {{ build_usability_test_links(ut, ut == current_usability_test, loop.index) }}
                 </li>
@@ -84,7 +84,7 @@
             <li {% if load_data_active %}class="active"{% endif %}>
                 <a href="{{ url('load') }}">
                     <i class="fa fa-fw fa-plus"></i>
-                    Agregar nuevos datos
+                    Administrar datos
                 </a>
             </li>
         </ul>
