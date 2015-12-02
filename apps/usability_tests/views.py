@@ -6,7 +6,7 @@ from .models import SqlDump
 from tpoo.utils.views import LoginRequiredMixin
 
 
-class LoadView(View, LoginRequiredMixin):
+class LoadView(LoginRequiredMixin, View):
 
     template_name = 'usability_tests/load.jinja'
 
@@ -30,7 +30,7 @@ class LoadView(View, LoginRequiredMixin):
         return self._render(request, form)
 
 
-class DeleteDumpView(View, LoginRequiredMixin):
+class DeleteDumpView(LoginRequiredMixin, View):
 
     def post(self, request, dump_id):
         dump = get_object_or_404(SqlDump, id=dump_id)
@@ -38,7 +38,7 @@ class DeleteDumpView(View, LoginRequiredMixin):
         return redirect('load')
 
 
-class ChooseDumpView(View, LoginRequiredMixin):
+class ChooseDumpView(LoginRequiredMixin, View):
 
     def post(self, request, dump_id):
         dump = get_object_or_404(SqlDump, id=dump_id)

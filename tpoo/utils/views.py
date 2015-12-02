@@ -1,9 +1,10 @@
-
+from django.utils.decorators import method_decorator
 from django.contrib.auth.decorators import login_required
 
 
 class LoginRequiredMixin(object):
-    @classmethod
-    def as_view(cls, **initkwargs):
-        view = super(LoginRequiredMixin, cls).as_view(**initkwargs)
-        return login_required(view)
+    u"""Ensures that user must be authenticated in order to access view."""
+
+    @method_decorator(login_required)
+    def dispatch(self, *args, **kwargs):
+        return super(LoginRequiredMixin, self).dispatch(*args, **kwargs)

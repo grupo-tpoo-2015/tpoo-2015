@@ -10,10 +10,11 @@ from tasks.models import ObservationType
 from .models import ChartCachedData
 
 
-time_type = ObservationType.objects.get(name='time')
-
-
 class Chart(object):
+
+    @property
+    def time_type(self):
+        return ObservationType.objects.get(name='time')
 
     def as_dict(self):
         return {
@@ -80,7 +81,7 @@ class CompareTaskBetweenVersionsChart(StackedBarChart):
     def _calculate(self):
         obs = Observation.objects.filter(
             step_execution__interaction_step__scenario_task__task__usability_test=self.usability_test,
-            observation_type=time_type,
+            observation_type=self.time_type,
         )
 
         versions = list(self.usability_test.versions.order_by('id'))
@@ -88,10 +89,10 @@ class CompareTaskBetweenVersionsChart(StackedBarChart):
         total_times = defaultdict(lambda: Counter())
         participants_sets = defaultdict(lambda: defaultdict(lambda: set()))
         for o in obs:
-            scenario_task = o.step_execution.interaction_step.scenario_task
-            total_times[scenario_task.task][scenario_task.scenario.app_version] += o.value
+            scnrio_task = o.step_execution.interaction_step.scnrio_task
+            total_times[scnrio_task.task][scnrio_task.scenario.app_version] += o.value
             participant = o.step_execution.task_scenario_execution.scenario_execution.participant
-            participants_sets[scenario_task.task][scenario_task.scenario.app_version].add(participant)
+            participants_sets[scnrio_task.task][scnrio_task.scenario.app_version].add(participant)
 
         self.data = []
         self.stack_names = []
@@ -133,7 +134,7 @@ class ParticipantTimesPerTaskBarChart(BarChart):
         total = 0
         for step in scenario_task_execution.steps.all():
             if not step.interaction_step.is_question:
-                for observation in step.observations.filter(observation_type=time_type):
+                for observation in step.observations.filter(observation_type=self.time_type):
                     total += observation.value
 
         return {

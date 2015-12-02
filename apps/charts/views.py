@@ -11,7 +11,7 @@ from .charts import (
 )
 
 
-class UsabilityTestView(View, LoginRequiredMixin):
+class UsabilityTestView(LoginRequiredMixin, View):
 
     template_name = NotImplemented
 
