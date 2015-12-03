@@ -11,7 +11,7 @@ var tree = (function ($) {
     'use strict';
 
     var margin = {
-            left: 50,
+            left: 70,
             top: 20,
             right: 100,
             bottom: 20,
