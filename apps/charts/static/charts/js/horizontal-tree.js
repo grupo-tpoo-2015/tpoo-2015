@@ -6,11 +6,27 @@
 
 // adapted from https://mohansun-canvas.herokuapp.com/content/training/
 
+/*
+    This module, given a set of data and a DOM selector, draws a tree inside the <svg> tag denoted
+    by that selector. The set of data must follow the following structure:
+
+        * A "name" field is mandatory. Determines the content of the label that will be displayed
+        next to the node
+
+    {
+        name: "Hello, I'm a tree, bla bla bla bla...",
+        full_name: ""Hello, I'm a tree, bla bla bla bla bla bla bla bla bla bla",
+
+    }
+
+*/
+
 var tree = (function ($) {
 
     'use strict';
 
-    var margin = {
+    var nextId = 1,
+        margin = {
             left: 70,
             top: 20,
             right: 100,
@@ -22,7 +38,6 @@ var tree = (function ($) {
         width,
         height = outerHeight - margin.top - margin.bottom,
 
-        i = 0,
         duration = 750,
         root,
 
@@ -31,7 +46,6 @@ var tree = (function ($) {
         diagonal = d3.svg.diagonal().projection(function (d) { return [d.y, d.x]; }),
 
         svg;
-
 
     function update(source) {
 
@@ -48,23 +62,42 @@ var tree = (function ($) {
         }
 
         // Compute the new tree layout.
-        var nodes = tree.nodes(root).reverse(),
+        var i,
+            accum,
+            nodes = tree.nodes(root).reverse(),
             links = tree.links(nodes),
             node,
             nodeEnter,
             nodeUpdate,
             nodeExit,
-            link;
+            link,
+            distanceByDepth = [
+                150,
+                180,
+                100,
+                180,
+                200,
+                80,
+                150,
+            ];
+
+        accum = 0;
+        for (i = 0; i < distanceByDepth.length; i += 1) {
+            accum += distanceByDepth[i];
+            distanceByDepth[i] = accum - distanceByDepth[i];
+        }
 
         // Normalize for fixed-depth.
-        nodes.forEach(function (d) { d.y = d.depth * 180; });
+        nodes.forEach(function (d) {
+            d.y = distanceByDepth[d.depth];
+        });
 
         // Update the nodesâ€¦
         node = svg.selectAll("g.node")
             .data(nodes, function (d) {
                 if (d.id === undefined) {
-                    i += 1;
-                    d.id = i;
+                    d.id = nextId;
+                    nextId += 1;
                 }
                 return d.id;
             });
@@ -172,10 +205,23 @@ var tree = (function ($) {
         });
     }
 
+    function abbreviateNodeNames(node) {
+        var i, children, maxLen = 30;
+        if (node.name.length > maxLen) {
+            node.full_name = node.name;
+            node.name = node.name.substring(0, maxLen - 3) + "...";
+        }
+        children = node.children || node._children || [];
+        for (i = 0; i < children.length; i += 1) {
+            abbreviateNodeNames(children[i]);
+        }
+    }
+
     return {
         draw: function (params) {
 
             root = params.data;
+            abbreviateNodeNames(root);
             root.x0 = height / 2;
             root.y0 = 0;
 

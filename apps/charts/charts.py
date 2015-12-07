@@ -156,20 +156,7 @@ class UsabilityTestTreeChart(BarChart):
         return self.usability_test.name
 
     def get_data_as_dict(self):
-        tree = self.usability_test_tree(self.usability_test)
-
-        def abbreviate_node_names(node):
-            max_len = 30
-            if len(node['name']) > max_len:
-                node['full_name'] = node['name']
-                node['name'] = node['name'][:max_len - 3] + "..."
-            children = node.get('children', node.get('_children', []))
-            for child in children:
-                abbreviate_node_names(child)
-
-        abbreviate_node_names(tree)
-
-        return tree
+        return self.usability_test_tree(self.usability_test)
 
     def usability_test_tree(self, usability_test):
         scenarios = Scenario.objects.filter(app_version__usability_test=usability_test)
@@ -198,7 +185,7 @@ class UsabilityTestTreeChart(BarChart):
             '_children': [
                 {
                     'name': 'Steps',
-                    '_children': map(self.step_tree, steps),
+                    '_children': list(self.step_trees(steps)),
                 },
                 {
                     'name': 'Refactorings',
@@ -212,15 +199,27 @@ class UsabilityTestTreeChart(BarChart):
             'name': refactoring.name,
         }
 
+    def step_trees(self, steps):
+        steps_by_types = defaultdict(lambda: [])
+        for step in steps:
+            steps_by_types[tuple(step.observation_types.order_by('id'))].append(step)
+
+        for otypes, otype_steps in steps_by_types.iteritems():
+            if otypes:
+                yield {
+                    'name': ', '.join([ot.name for ot in otypes]),
+                    'children': map(self.step_tree, otype_steps),
+                }
+
     def step_tree(self, step):
         observations = Observation.objects.filter(step_execution__interaction_step=step)
 
-        extra_classes = [ot.name for ot in step.observation_types.all()]
-
         if not observations.exists():
             return {
-                'extra_classes': extra_classes,
-                'name': step.name + "(No data)",
+                'name': step.name,
+                '_children': [{
+                    'name': 'No hay datos',
+                }],
             }
 
         min_value = observations.aggregate(min=Min('value'))['min']
@@ -230,7 +229,6 @@ class UsabilityTestTreeChart(BarChart):
         avg_value = observations.aggregate(avg=Avg('value'))['avg']
 
         return {
-            'extra_classes': extra_classes,
             'name': step.name,
             '_children': [
                 {
