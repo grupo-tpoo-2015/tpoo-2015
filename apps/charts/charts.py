@@ -208,7 +208,7 @@ class UsabilityTestTreeChart(BarChart):
             if otypes:
                 yield {
                     'name': ', '.join([ot.name for ot in otypes]),
-                    'children': map(self.step_tree, otype_steps),
+                    '_children': map(self.step_tree, otype_steps),
                 }
 
     def step_tree(self, step):

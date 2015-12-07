@@ -72,13 +72,13 @@ var tree = (function ($) {
             nodeExit,
             link,
             distanceByDepth = [
-                150,
-                180,
-                100,
-                180,
+                70,
                 200,
-                80,
+                75,
                 150,
+                300,
+                80,
+                200,
             ];
 
         accum = 0;
@@ -115,9 +115,15 @@ var tree = (function ($) {
             .style("fill", function (d) { return d._children ? "#ccff99" : "#fff"; });
 
         nodeEnter.append("text")
-            .attr("x", function (d) { return d.children || d._children ? -13 : 13; })
-            .attr("dy", ".35em")
-            .attr("text-anchor", function (d) { return d.children || d._children ? "end" : "start"; })
+            .attr("x", function (d) {
+                return d.children || d._children ? 13 : 13;
+            })
+            .attr("dy", function (d) {
+                return d.children || d._children ? "-1.35em" : ".35em";
+            })
+            .attr("text-anchor", function (d) {
+                return d.children || d._children ? "end" : "start";
+            })
             .text(function (d) { return d.name; })
             .style("fill-opacity", 1e-6)
             .attr("class", function (d) {
@@ -206,7 +212,7 @@ var tree = (function ($) {
     }
 
     function abbreviateNodeNames(node) {
-        var i, children, maxLen = 30;
+        var i, children, maxLen = 50;
         if (node.name.length > maxLen) {
             node.full_name = node.name;
             node.name = node.name.substring(0, maxLen - 3) + "...";
