@@ -215,14 +215,12 @@ class UsabilityTestTreeChart(BarChart):
     def step_tree(self, step):
         observations = Observation.objects.filter(step_execution__interaction_step=step)
 
+        extra_classes = [ot.name for ot in step.observation_types.all()]
+
         if not observations.exists():
             return {
-                'name': step.name,
-                '_children': [
-                    {
-                        'name': 'No data',
-                    },
-                ],
+                'extra_classes': extra_classes,
+                'name': step.name + "(No data)",
             }
 
         min_value = observations.aggregate(min=Min('value'))['min']
@@ -232,6 +230,7 @@ class UsabilityTestTreeChart(BarChart):
         avg_value = observations.aggregate(avg=Avg('value'))['avg']
 
         return {
+            'extra_classes': extra_classes,
             'name': step.name,
             '_children': [
                 {

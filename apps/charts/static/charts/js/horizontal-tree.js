@@ -71,7 +71,9 @@ var tree = (function ($) {
 
         // Enter any new nodes at the parent's previous position.
         nodeEnter = node.enter().append("g")
-            .attr("class", "node")
+            .attr("class", function (d) {
+                return ["node"].concat(d.extra_classes || []).join(" ");
+            })
             .attr("transform", function () { return "translate(" + source.y0 + "," + source.x0 + ")"; })
             .on("click", click);
 
