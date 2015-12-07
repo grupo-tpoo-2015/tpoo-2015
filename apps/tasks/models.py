@@ -15,7 +15,6 @@ class ScenarioTask(models.Model):
     scenario = models.ForeignKey(Scenario, related_name='tasks')
     refactorings = models.ManyToManyField(Refactoring, related_name='scenario_tasks')
 
-
     def __unicode__(self):
         return "Task %d for scenario %d" % (self.task_id, self.scenario_id)
 
@@ -26,6 +25,9 @@ class InteractionStep(models.Model):
     order = models.PositiveSmallIntegerField()
     is_question = models.BooleanField(default=False)
     observation_types = models.ManyToManyField(ObservationType, related_name='steps')
+
+    class Meta:
+        ordering = ['order']
 
     def __unicode__(self):
         return "%d) %s" % (self.order, self.name)
