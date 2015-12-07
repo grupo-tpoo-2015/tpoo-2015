@@ -48,7 +48,7 @@
                         {% else %}
                         <form action="{{ url('choose_dump', dump.id) }}" method="POST">
                             <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
-                            <input type="submit" value="Establecer" class="btn btn-default"/>
+                            <input type="submit" value="Cargar" class="btn btn-default"/>
                         </form>
                         <form action="{{ url('delete_dump', dump.id) }}" method="POST">
                             <input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
