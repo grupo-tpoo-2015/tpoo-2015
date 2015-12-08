@@ -14,7 +14,7 @@ class Chart(object):
 
     @property
     def time_type(self):
-        return ObservationType.objects.get(name='time')
+        return ObservationType.objects.get(name='Tiempo')
 
     def as_dict(self):
         return {
@@ -147,7 +147,7 @@ class ParticipantTimesPerTaskBarChart(BarChart):
         return all_objs.filter(scenario_execution__participant=self.participant)
 
 
-class UsabilityTestTreeChart(BarChart):
+class UsabilityTestTreeChart(Chart):
 
     def __init__(self, usability_test):
         self.usability_test = usability_test
