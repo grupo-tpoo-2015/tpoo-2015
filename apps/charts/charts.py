@@ -89,7 +89,7 @@ class CompareTaskBetweenVersionsChart(StackedBarChart):
         total_times = defaultdict(lambda: Counter())
         participants_sets = defaultdict(lambda: defaultdict(lambda: set()))
         for o in obs:
-            scnrio_task = o.step_execution.interaction_step.scnrio_task
+            scnrio_task = o.step_execution.interaction_step.scenario_task
             total_times[scnrio_task.task][scnrio_task.scenario.app_version] += o.value
             participant = o.step_execution.task_scenario_execution.scenario_execution.participant
             participants_sets[scnrio_task.task][scnrio_task.scenario.app_version].add(participant)
