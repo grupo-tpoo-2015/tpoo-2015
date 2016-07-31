@@ -32,7 +32,7 @@ done;
 echo -e "\e[32mOK\e[39m"
 
 # Our migration script is run, filling the default database (tpoo)
-# with data from the legacy databse (tpoo).
+# with data from the legacy databse (tpoodump).
 # Since no database is specified, dbshell command uses the default,
 # just like out script which assumes that tpoo is the current db.
 echo -n "Migration data from legacy database to the default one... "
