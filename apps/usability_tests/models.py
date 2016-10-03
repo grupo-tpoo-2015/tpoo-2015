@@ -21,7 +21,7 @@ class AppVersion(models.Model):
 
 
 class Refactoring(models.Model):
-    name = models.CharField(max_length=64)
+    name = models.CharField(max_length=100)
 
     def __unicode__(self):
         return self.name
