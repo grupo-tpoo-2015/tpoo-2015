@@ -59,24 +59,26 @@ Se reemplaza por metodo que hace las queries necesarias
 insert into tasks_scenariotask_refactorings(scenariotask_id, refactoring_id)
 select task_version_id, refactoring_id
 from(
-  select task_version_id, refactoring_id
-  from tpoodump.step
-  where (refactoring_id is not null) and (refactoring_id <> 0)
+    select task_version_id, refactoring_id
+    from tpoodump.step
+    where (refactoring_id is not null) and (refactoring_id <> 0)
 
-  UNION ALL
+    UNION ALL
 
-  select task_version_id, second_refactoring_id
-  from tpoodump.step
-  where (second_refactoring_id is not null) and (second_refactoring_id <> 0)
+    select task_version_id, second_refactoring_id
+    from tpoodump.step
+    where (second_refactoring_id is not null) and (second_refactoring_id <> 0)
 
-  UNION ALL
+    UNION ALL
 
-  select task_version_id, third_refactoring_id
-  from tpoodump.step
-  where (third_refactoring_id is not null) and (third_refactoring_id <> 0)
+    select task_version_id, third_refactoring_id
+    from tpoodump.step
+    where (third_refactoring_id is not null) and (third_refactoring_id <> 0)
 ) T
-
-  group by task_version_id, refactoring_id;
+where task_version_id in (
+  select id from tpoodump.task_version where refactored = 1
+)
+group by task_version_id, refactoring_id;
 
 /*migra scenario execution*/
 insert into usability_tests_executions_scenarioexecution(id, participant_id, scenario_id)
